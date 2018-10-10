@@ -3,7 +3,7 @@
     <!-- 顶部 -->
    <mt-header title="不酷猫音乐" class="bg" >
   <router-link to="/" slot="left">
-    <mt-button icon="back">back</mt-button>
+    <mt-button icon="back" @click.native="last" >back</mt-button>
   </router-link>
   <mt-button icon="more" slot="right" @click="show()" ></mt-button>
 </mt-header>
@@ -14,23 +14,27 @@
       <mt-tab-item id="look">看</mt-tab-item>
        <mt-tab-item id="sing">唱</mt-tab-item>
     </mt-navbar>
-    <router-view/>
+    <!-- 搜索按钮 -->
+    <div class="search">
+      <router-link class="sea_a" to="/" >🔍搜索</router-link>
+    </div>
+    <router-view v-on:jump="changeS"  />
 <!-- 播放器 -->
     <div class="play_box">
-      <div class="play_pic"></div>
-      <audio :src="musicurl" autoplay ></audio>
-      <div  class="pro"  >
-      <mt-progress  class="pros" :bar-height="4" :value="40">
-        <div slot="start">0%</div>
-        <div slot="end">100%</div>
+      <div class="play_pic"><img :src="picurl" alt="加载失败"></div>
+      <audio ref='player'  :src="musicurl" autoplay auto ></audio>
+      <div  class="pro" >
+      <mt-progress  class="pros" :bar-height="4" :value="prec"  >
+        <div slot="start">{{this.timeNow|time}} </div>
+        <div slot="end"> {{this.timeDuration|time}}</div>
       </mt-progress>
     </div>
     <div class="control">
       <div class="text">
         <span >{{this.songname}}</span> <span>{{this.arname}}</span>
       </div>
-      <mt-button class="btn" slot="right"  ><img src="./assets/play.png" height="32" width="32" slot="icon"></mt-button>
-      <mt-button class="btn" slot="right"  ><img src="./assets/next.png" height="32" width="32" slot="icon"></mt-button>
+      <mt-button class="btn" slot="right"  @click.native="playmusic()" ><img  :src="play_img" height="32" width="32" slot="icon"></mt-button>
+      <mt-button class="btn" slot="right"  @click.native="nextmusic()" ><img   src="./assets/next.png" height="32" width="32" slot="icon"></mt-button>
     </div>
        
     </div>
@@ -38,10 +42,29 @@
 </template>
 
 <script>
-import { Navbar, TabItem,Toast } from "mint-ui";
-
+import { Navbar, TabItem, Toast } from "mint-ui";
+import listen from './components/navbar/listen'
 export default {
   name: "App",
+   data() {
+    return {
+      play_img:`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QjYzRjgzOTNDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QjYzRjgzOTRDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpCNjNGODM5MUNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpCNjNGODM5MkNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pl/OESoAAAHxSURBVHja7N27SgNBFIDhmdmsrpdoLETRysLCJnipFETt8ww+QMRCe43oAwj6JiJYesNSYmdhkVioWCkJkiXZ7DGKdgpmwoY1/H+TwHIY8s1k29Eioqj9aeCBB57+OfzE8bbaGVtO/vQslND5bW736eJ1IzU3tf96fVvI7FqtmxtZHBWj/WbmTKi8t5qfzC5k7qKGT0S9wM7jWclmroGu1pPTs42v+WZn1/rS83v3p1ehl9DNzho/kKzKmKhdIl1ga3ypp5X5w/JN3mZuuD9VsEH/+iu25d1rVIyz3Tg/qHrW795OgN97OK+0Mu+ItnoVamOCuB/FWJ/4Tg544IEn4IEn4IEn4IEn4IEn4IEHHgLggSfggSfggSfggSfggSfggQeegAeegAeegAeegAeegAeegAceeAIeeAIeeAIeeAIeeAIeeAIeeOAJeOAJeOAJeOAJeOAJeOAJeOCBJ+CBJ+CBJ+CBJ+CBJ+CBJ+CBBz6mDbie1X2wruP41otKB8C3enX0S1BxbebKfmXYelHdAfBDbm+tlfmEMlY3GNfDuqergcT5xEd6S/1m8SSYfJZLrfXHQQoan+H3DxMlv256XaS7yzjlnDotr86sNL3uQSmfT5e8o2o9SH6u+dcNE3FT7mCxHfBapE1bTMDHoXcBBgCzhYMOr3tY2AAAAABJRU5ErkJggg==`,
+      selected: "listen",
+      prec: 0,
+      song: {},
+      songname: "",
+      arname: "",
+      picurl: "",
+      musicurl: "",
+      mid: 0,
+      prec: 0,
+      timeNow: 0,
+      timeDuration: 0,
+      mouseX:0,
+     nowX:0
+
+    };
+  },
   methods: {
     show() {
       Toast({
@@ -52,61 +75,115 @@ export default {
     goto(path) {
       this.$router.push(`/${path}`);
     },
-    getsong(mid=parseInt(300000+Math.floor(Math.random()*80000))){
-      
-
-      this.mid=mid;
-      var url = `song/detail?ids=${mid}`;
-      var url2=`music/url?id=${mid}`;
-       this.$http.get(url).then(result=>{
-
-         this.song=result.body.songs[0];
-         this.songname= this.song.name;
-         this.arname=this.song.ar[0].name;
-         console.log(this.song);
-        
-       });
-
-       this.$http.get(url2).then(result=>{
-          console.log(result.body.data);
-              this.musicurl=result.body.data[0].url;
-
-         });
-         console.log(this.mid);
-    
-    },
+     addEventListeners: function () {    
+           const self = this;    
+             self.$refs.player.addEventListener('timeupdate', self._currentTime);   
+             self.$refs.player.addEventListener('canplay', self._durationTime)  ;    },   
+    removeEventListeners: function () {    
+            const self = this;     
+        self.$refs.player.removeEventListener('timeupdate', self._currentTime) ;
+               self.$refs.player.removeEventListener('canplay', self._durationTime) ;     }, 
+    _currentTime: function () {     
+                         const self = this;     
+                            self.timeNow = parseInt(self.$refs.player.currentTime)  ; 
+                            self.prec=(self.timeNow/self.timeDuration)*100;
+                            if(self.prec>=100){
+                              this.nextmusic();
+                              this.$refs.player.play();
+                            }
+                            },
+    _durationTime: function () {  
+                                          const self = this;   
+                               self.timeDuration = parseInt(self.$refs.player.duration)},
    
+    playmusic(){
+     if(this.$refs.player.paused)
+      {this.$refs.player.play();
+      this.play_img='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QjYzRjgzOTNDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QjYzRjgzOTRDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpCNjNGODM5MUNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpCNjNGODM5MkNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pl/OESoAAAHxSURBVHja7N27SgNBFIDhmdmsrpdoLETRysLCJnipFETt8ww+QMRCe43oAwj6JiJYesNSYmdhkVioWCkJkiXZ7DGKdgpmwoY1/H+TwHIY8s1k29Eioqj9aeCBB57+OfzE8bbaGVtO/vQslND5bW736eJ1IzU3tf96fVvI7FqtmxtZHBWj/WbmTKi8t5qfzC5k7qKGT0S9wM7jWclmroGu1pPTs42v+WZn1/rS83v3p1ehl9DNzho/kKzKmKhdIl1ga3ypp5X5w/JN3mZuuD9VsEH/+iu25d1rVIyz3Tg/qHrW795OgN97OK+0Mu+ItnoVamOCuB/FWJ/4Tg544IEn4IEn4IEn4IEn4IEn4IEHHgLggSfggSfggSfggSfggSfggQeegAeegAeegAeegAeegAeegAceeAIeeAIeeAIeeAIeeAIeeAIeeOAJeOAJeOAJeOAJeOAJeOAJeOCBJ+CBJ+CBJ+CBJ+CBJ+CBJ+CBBz6mDbie1X2wruP41otKB8C3enX0S1BxbebKfmXYelHdAfBDbm+tlfmEMlY3GNfDuqergcT5xEd6S/1m8SSYfJZLrfXHQQoan+H3DxMlv256XaS7yzjlnDotr86sNL3uQSmfT5e8o2o9SH6u+dcNE3FT7mCxHfBapE1bTMDHoXcBBgCzhYMOr3tY2AAAAABJRU5ErkJggg==';
+      }
+      else{
+        this.$refs.player.pause();
+         this.play_img='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUMxQTBFRDJDQkQ4MTFFODkzNjBERkM4MDM0NERFNTIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUMxQTBFRDNDQkQ4MTFFODkzNjBERkM4MDM0NERFNTIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFQzFBMEVEMENCRDgxMUU4OTM2MERGQzgwMzQ0REU1MiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFQzFBMEVEMUNCRDgxMUU4OTM2MERGQzgwMzQ0REU1MiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PhOxM5gAAAYISURBVHja7J1bbBRV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';
+      }
+       
+    },
+    nextmusic(){
+        this.mid++;
+        var newmid=this.mid;
+        this.getsong(newmid);
+    },
+    changeM(e){
+      e.targetTouches[0].clientX 
+      console.log(this.mouseX);
+    },
+     changeS(){
+         this.selected=0;
+     } ,
+     last(){
+       
+       if(location.hash=="#/listen"||location.hash=="#/")
+      { return}else history.go(-1);
+     },
+    getsong(mid = parseInt(300000 + Math.floor(Math.random() * 80000))) {
+      this.mid = mid;
+      var url = `song/detail?ids=${mid}`;
+      var url2 = `music/url?id=${mid}`;
+      this.$http.get(url).then(result => {
+        this.song = result.body.songs[0];
+        if(this.song==undefined){
+          this.getsong();
+          return;
+        }
+        this.songname = this.song.name;
+        this.arname = this.song.ar[0].name;
+       
+        console.log(this.song.al);
+        this.picurl=this.song.al.picUrl;
+      });
+
+      this.$http.get(url2).then(result => {
+        
+        this.musicurl = result.body.data[0].url;
+       this.$refs.player.load();
+  
+      this.addEventListeners();
+      
+      });
+      console.log(this.mid);
+    }
   },
-  data() {
-    return {
-      selected: "listen",
-      music:"#",
-      val:0.5,
-      song:{},
-      songname:"",
-      arname:"",
-      picurl:"",
-      musicurl:"",
-      mid:0
-    };
-  },
+ components:{
+   listen
+ },
   watch: {
     selected() {
+      if(this.selected==0){
+        var bb= document.querySelector(".mint-navbar .mint-tab-item.is-selected");
+        console.log(bb);
+        return;}
       this.$router.push(`/${this.selected}`);
     }
   },
-  created(){
+  created() {
     this.getsong();
-  }
+  },
+  mounted(){
+    
+    
+  },
+      beforeDestroyed() {
+      this.removeEventListeners()
+    }
+
 };
 </script>
 
 <style lang="scss">
 $bgc: black;
 $topc: rgba(32, 179, 125, 1);
-$l20:20%;
-$l100:100%;
-$l50:50%;
+$l20: 20%;
+$l100: 100%;
+$l50: 50%;
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -129,86 +206,109 @@ $l50:50%;
   font-size: 1.1rem;
 }
 
-.mint-navbar .mint-tab-item.is-selected  {
+.mint-navbar .mint-tab-item.is-selected {
   border-color: $topc;
-
-  .mint-tab-item-label{
-    font-size: 1.3rem;color: $topc;
+box-sizing: border-box;
+  .mint-tab-item-label {
+    font-size: 1.3rem;
+    color: $topc;
   }
 }
-.play_box{
+.play_box {
   width: 100%;
   position: fixed;
   left: 0;
   bottom: 0;
   height: 8%;
   background-color: $bgc;
-  .pro{
+  .pro {
     width: 70%;
-    position:absolute;
+    position: absolute;
     top: 10px;
     right: 5%;
     height: 5px;
-    .pros{
+    .pros {
       width: $l100;
       height: $l100;
-      div{
+      div {
         color: white;
-        font-size: 5px;
-        line-height: 5px
+        font-size: 8px;
+        line-height: 5px;
+        margin: 0 3px;
       }
     }
   }
 }
-.play_pic{
+.play_pic {
   width: 80px;
   height: 80px;
   border-radius: $l50;
   position: absolute;
   left: 3%;
   top: -50%;
-  background-color: $topc;
+  background-color: $bgc;
   border: 2px solid black;
+  overflow: hidden;
+  img{
+    width: 100%
+  }
 }
-.control{
+.control {
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 70%;
-    position:absolute;
-    top: 20px;
-    right: 5%;
-    height: 60%;
-    .text{
-      width: 60%;
-  height: 90%;
-  color: white;
-  span{display: inline-block;
-  max-width: 60%;
-    line-height: 30px
+  position: absolute;
+  top: 20px;
+  right: 5%;
+  height: 60%;
+  .text {
+    width: 60%;
+    height: 90%;
+    color: white;
+    span {
+      display: inline-block;
+      max-width: 60%;
+      line-height: 30px;
+    }
+    span:nth-of-type(2) {
+      font-size: 0.6rem;
+      max-width: 40%;
+    }
   }
-  span:nth-of-type(2){
-    font-size: 0.6rem;
-    max-width: 40%;
+  .mint-button {
+    width: 2rem;
+    height: 2rem;
+    background-color: transparent;
+    border: none;
   }
- 
-    }
-    .mint-button{
-      width: 2rem;
-      height: 2rem;
-      background-color: transparent;
-      border: none;
-    }
-    .btn img{
-      margin-left: -0.8rem;
-
-    }
+  .btn img {
+    margin-left: -0.8rem;
+  }
 }
 .mt-range-progress {
-  background-color: white
+  background-color: white;
 }
 .mt-progress-progress {
   background-color: $topc;
 }
-
+.search{
+  width: $l100;
+  height: 3rem;
+  background: $bgc;
+  border-top:1px solid black; 
+  .sea_a{
+    width: 90%;
+    display: block;
+    text-align: center;
+    background: $topc;
+    color: white;
+    margin: auto;
+    margin-top: 10px;
+    border-radius: 30px;
+    opacity: 0.8;
+    height: 50%;
+    line-height: 24px
+  }
+}
 </style>

@@ -15,7 +15,12 @@ Vue.use(VueResource)
 Vue.http.options.root = "http://localhost:4000/";
 //7:设置全局ajax post 访问格式
 Vue.http.options.emulateJSON =  true;
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+Vue.filter("time",function(s){
+  if(s<60)return `${parseInt(s%60)}`;
+  else
+  return `${parseInt(s/60)}:${s%60<10?`0${parseInt(s%60)}`:parseInt(s%60)}`
+});
 
 /* eslint-disable no-new */
 new Vue({
