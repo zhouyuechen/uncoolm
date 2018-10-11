@@ -9,10 +9,15 @@ import Yueku from '@/components/listen/yueku'
 import Gedan from '@/components/listen/gedan'
 import Geshou from '@/components/listen/geshou'
 import Diantai from '@/components/listen/diantai'
+import Search from '@/components/search'
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+      path: '/search',
+       component: Search
+    },
     {
       path: '/',
        component: Listen

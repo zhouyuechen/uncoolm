@@ -15,10 +15,11 @@
        <mt-tab-item id="sing">唱</mt-tab-item>
     </mt-navbar>
     <!-- 搜索按钮 -->
-    <div class="search">
-      <router-link class="sea_a" to="/" >🔍搜索</router-link>
+    <div :class="search">
+      <input type="search" class="sea_a"  @focus="showSearch"  :placeholder="zhanwei" v-model="search_value"  />
+      <button  @click="letsSearch" >🔍</button>
     </div>
-    <router-view v-on:jump="changeS"  />
+    <router-view v-on:jump="changeS" v-on:search_val="change_search_val" :res="search_res"  />
 <!-- 播放器 -->
     <div class="play_box">
       <div class="play_pic"><img :src="picurl" alt="加载失败"></div>
@@ -43,7 +44,8 @@
 
 <script>
 import { Navbar, TabItem, Toast } from "mint-ui";
-import listen from './components/navbar/listen'
+import listen from './components/navbar/listen';
+import search from './components/search';
 export default {
   name: "App",
    data() {
@@ -61,11 +63,35 @@ export default {
       timeNow: 0,
       timeDuration: 0,
       mouseX:0,
-     nowX:0
+     nowX:0,
+     search:"search",
+     zhanwei:"搜索",
+     search_value:"",
+     search_res:[]
 
     };
   },
   methods: {
+    letsSearch(){
+        if(this.search_value===""){
+          this.showSearch();
+          return
+        }else{ 
+         var url=`search?keywords=${this.search_value}`;
+          this.$http.get(url).then(result => {
+        this.search_res=result.body.result.songs;
+         
+      console.log(this.search_res);
+      });
+
+        this.search_value="";
+        }
+    },
+    showSearch(){
+      Toast("你猜");
+      this.$router.push(`/search`);
+      this.changeS();
+    },
     show() {
       Toast({
         message: "这里是不酷猫，更多精彩"
@@ -116,6 +142,9 @@ export default {
       e.targetTouches[0].clientX 
       console.log(this.mouseX);
     },
+    change_search_val(val){
+       this.search_value=val;
+    },
      changeS(){
          this.selected=0;
      } ,
@@ -153,7 +182,7 @@ export default {
     }
   },
  components:{
-   listen
+   listen,search
  },
   watch: {
     selected() {
@@ -292,11 +321,15 @@ box-sizing: border-box;
 .mt-progress-progress {
   background-color: $topc;
 }
+.nolook{
+  display: none;
+}
 .search{
   width: $l100;
   height: 3rem;
   background: $bgc;
   border-top:1px solid black; 
+  position: relative;
   .sea_a{
     width: 90%;
     display: block;
@@ -309,6 +342,18 @@ box-sizing: border-box;
     opacity: 0.8;
     height: 50%;
     line-height: 24px
+  }
+  button{
+    position: absolute;
+    height: 50%;
+    width: 1.5rem;
+    border-radius: 20%;
+    background: transparent;
+    border: none;
+    margin-top: 10px;
+    right: 10%;
+    top:0;
+    padding: 0;
   }
 }
 </style>
