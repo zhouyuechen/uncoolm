@@ -19,10 +19,13 @@
       <input type="search" class="sea_a"  @focus="showSearch"  :placeholder="zhanwei" v-model="search_value"  />
       <button  @click="letsSearch" >🔍</button>
     </div>
-    <router-view v-on:jump="changeS" v-on:search_val="change_search_val" :res="search_res"  />
-<!-- 播放器 -->
+    <!-- 组件显示区 -->
+    <router-view v-on:jump="changeS" v-on:search_val="change_search_val" :res="search_res"   />
+      <!-- 返回顶部按钮 -->
+      <button :class="back_btn" @click="backTop()"  >TOP</button>
+<!-- 底部播放器 -->
     <div class="play_box">
-      <div class="play_pic"><img :src="picurl" alt="加载失败"></div>
+      <div class="play_pic"><img v-lazy="picurl" alt="加载失败"></div>
       <audio ref='player'  :src="musicurl" autoplay auto ></audio>
       <div  class="pro" >
       <mt-progress  class="pros" :bar-height="4" :value="prec"  >
@@ -46,6 +49,7 @@
 import { Navbar, TabItem, Toast } from "mint-ui";
 import listen from './components/navbar/listen';
 import search from './components/search';
+/* import func from './vue-temp/vue-editor-bridge'; */
 export default {
   name: "App",
    data() {
@@ -67,7 +71,8 @@ export default {
      search:"search",
      zhanwei:"搜索",
      search_value:"",
-     search_res:[]
+     search_res:[],
+     back_btn:"backtop"
 
     };
   },
@@ -84,13 +89,14 @@ export default {
       console.log(this.search_res);
       });
 
-        this.search_value="";
+        
         }
     },
     showSearch(){
       Toast("你猜");
-      this.$router.push(`/search`);
+      this.$router.push(`/search/搜索`);
       this.changeS();
+      
     },
     show() {
       Toast({
@@ -144,6 +150,9 @@ export default {
     },
     change_search_val(val){
        this.search_value=val;
+       if(this.search_value!==""&&this.search_value!="搜索"){
+        this.letsSearch();
+      }
     },
      changeS(){
          this.selected=0;
@@ -179,11 +188,30 @@ export default {
       
       });
       console.log(this.mid);
+    },
+    backTop(){
+      var  timer = setInterval(function () {
+		  this.isTop = false;
+						//获取滚动条的滚动高度
+						var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+	
+						//用于设置速度差，产生缓动的效果
+						var speed = Math.floor(-scrollTop /3);
+						document.documentElement.scrollTop = document.body.scrollTop = scrollTop + speed;
+						this.isTop = true; //用于阻止滚动事件清除定时器
+	
+						if (scrollTop == 0) {
+							clearInterval(timer);
+						}
+	
+					}, 50);
     }
+
   },
  components:{
    listen,search
  },
+
   watch: {
     selected() {
       if(this.selected==0){
@@ -197,7 +225,7 @@ export default {
     this.getsong();
   },
   mounted(){
-    
+  
     
   },
       beforeDestroyed() {
@@ -218,6 +246,24 @@ $l50: 50%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  .backtop{
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: none;
+    outline: none;
+    line-height: 3rem;
+    position: fixed;
+    right: 1rem;
+    bottom: 6rem;
+    text-align: center;
+    background-color: $topc;
+    font-size: 1rem;
+    padding: 0;
+    color: white;
+    font-weight: 800
+  }
 }
 .bg {
   background-color: $bgc;

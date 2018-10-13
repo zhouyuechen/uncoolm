@@ -4,17 +4,18 @@
  <mt-spinner type="snake" color="rgba(32, 179, 125, 1)" :class="sp_class"  :size="80"></mt-spinner>
  <mt-swipe :auto="3000" prevent  :class="sw_class" continuous ref="sw" >
     <mt-swipe-item v-for="(item,i) in list" :key="i">
-       <img  :src="item.picUrl"  />
+       <img  v-lazy="item.picUrl"  />
     </mt-swipe-item>
   </mt-swipe>
 <!-- 导航 -->
 <nav >
    <div v-for="(item,i) in navs" :key="i" > 
        <router-link class="nav_a" :to="item.path" @click.native="clearS">
-           <img :src="item.src" alt="加载失败">
+           <img v-lazy="item.src" alt="加载失败">
        <p>{{item.title}}</p></router-link></div>
    
 </nav>
+ <p class="title">每日推荐</p><hr>
 <infinite-box></infinite-box>
  </div>
 </template>
@@ -107,6 +108,12 @@ $topc:rgba(32, 179, 125, 1);
 }
 .mint-swipe-indicators{
     bottom: 5px;
+}
+.listen{
+    p.title{
+        font-size: 2rem;
+        color:$topc;
+    }
 }
 .listen nav{
     margin: 5px 0;

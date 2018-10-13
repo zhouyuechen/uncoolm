@@ -26,7 +26,12 @@ Vue.filter("time",function(s){
   else
   return `${parseInt(s/60)}:${s%60<10?`0${parseInt(s%60)}`:parseInt(s%60)}`
 });
-
+Vue.filter("dateFormat",function(datestr,pattern="YYYY-MM-DD"){
+  return new Date(datestr).toLocaleString().slice(0,10);
+});
+Vue.filter("ww",function(num){
+  return (num/10000).toFixed(1);
+});
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

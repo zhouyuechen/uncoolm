@@ -31,6 +31,9 @@ export default {
     };
   },
   props: {
+      kw: {
+      type: [String]
+    },
     res: {
       type: [String, Object, Array]
     }
@@ -57,7 +60,7 @@ export default {
         className:"toast"});
           return;
         }
-        this.data = this.data.concat(this.res.slice(last - 1, last + 4));
+        this.data = this.data.concat(this.res.slice(last , last + 5));
         console.log(this.data);
 
         this.loading = false;
@@ -92,6 +95,13 @@ export default {
         this.data = this.res.slice(0, 5);
         this.loading = false;
         console.log(this.data);
+      }
+    },
+     kw: {
+      /* 监听父组件传来的res */
+      immediate: true,
+      handler: function() {
+        this.search_val(this.kw);
       }
     }
   },

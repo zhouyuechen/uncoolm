@@ -6,7 +6,7 @@
   infinite-scroll-distance="30" infinite-scroll-immediate-check="true" >
     <li v-for="(item,i) in data" :key="i" class="mvs"  > 
         <div class="mv_de" ref="mvs">
-          <img :src="item.cover" alt="加载失败">
+          <img v-lazy="item.cover" alt="加载失败">
           <div class="playcount">▶:{{item.playCount}}</div>
           <div class="intr">
             <p class="name">{{item.name}}</p>
@@ -49,7 +49,7 @@
         className:"toast"});
           return;
         }
-        this.data = this.data.concat(this.res.slice(last - 1, last + 4));
+        this.data = this.data.concat(this.res.slice(last , last + 5));
         console.log(this.data);
        
       

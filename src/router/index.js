@@ -15,8 +15,9 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/search',
-       component: Search
+      path: '/search/:kw',
+       component: Search,
+       props:true
     },
     {
       path: '/',

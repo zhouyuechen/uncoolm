@@ -1,14 +1,14 @@
 <template>
  <div class="infinite">
-     <p>每日推荐</p><hr>
+    
  <ul
   v-infinite-scroll="loadMore"
   infinite-scroll-disabled="loading"
   infinite-scroll-distance="30" infinite-scroll-immediate-check="loading2" >
   <li v-for="(item,i) in list" :key="i">
-      <img :src="item.song.album.picUrl" alt="加载失败"> 
+      <img v-lazy="item.song.album.picUrl" alt="加载失败"> 
       <div><p>{{item.name}}</p><p>{{item.song.artists[0].name}}</p></div>
-      <p>发布时间</p>
+      <p>发布时间<br>{{item.song.album.publishTime|dateFormat}}</p>
 
   </li>
 </ul>
