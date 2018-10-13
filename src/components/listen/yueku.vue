@@ -9,7 +9,7 @@
     </div>
  <mt-tab-container v-model="active" swipeable>
   <mt-tab-container-item id="t1" >
-    <infinite-box></infinite-box>
+    <infinite-box v-on:playThis="goup"   ></infinite-box>
   </mt-tab-container-item>
   <mt-tab-container-item id="t2">
     <ul class="res"  v-infinite-scroll="loadMore"
@@ -17,7 +17,7 @@
   infinite-scroll-distance="30" infinite-scroll-immediate-check="true" >
     <li v-for="(item,i) in rank_show" :key="i" > 
         <div class="num"><i>{{i+1}}</i></div> <div class="info"><p>{{item.name}}</p><span>{{item.ar[0].name}}</span></div>
-        <mt-button class="play" @click="play_this(item.id)" >▶</mt-button>
+        <mt-button class="play" @click="playthis(item.id)" >▶</mt-button>
         </li>
    
  </ul>
@@ -49,6 +49,14 @@
        'infinite-box':infinite   //注册子组件
      },
     methods:{
+      goup(mid){
+        this.$emit("playThis", mid);
+    },
+       playthis(mid){
+      this.mid=mid;
+    
+        this.$emit("playThis", this.mid);
+      },
       goSearch(kw){
         this.kw=kw;
         this.$router.push(`/search/${this.kw}`);

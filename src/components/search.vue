@@ -13,7 +13,7 @@
   infinite-scroll-distance="30" infinite-scroll-immediate-check="true" >
     <li v-for="(item,i) in data" :key="i" > 
         <div class="info"><p>{{item.name}}</p><span>{{item.artists[0].name}}</span></div>
-        <mt-button class="play" @click="play_this(item.id)" >▶</mt-button>
+        <mt-button class="play" @click="playthis(item.id)" >▶</mt-button>
         </li>
    
  </ul>
@@ -27,7 +27,8 @@ export default {
     return {
       hot: [],
       data: [],
-      loading: true
+      loading: true,
+      mid:0
     };
   },
   props: {
@@ -39,8 +40,10 @@ export default {
     }
   },
   methods: {
-      play_this(mid){
-          console.log(mid);
+    playthis(mid){
+      this.mid=mid;
+    
+        this.$emit("playThis", this.mid);
       },
     loadMore() {
       /* 加载更多 */
@@ -142,7 +145,7 @@ $l50: 50%;
     height: 1.5rem;
     line-height: 1.5rem;
     border-radius: 10px;
-    background-color: transparent;
+    background-color: rgba(0,0,0,0.3);
     margin: 0.1rem 0;
     color: white;
   }

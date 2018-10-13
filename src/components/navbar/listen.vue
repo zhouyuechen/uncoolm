@@ -16,7 +16,7 @@
    
 </nav>
  <p class="title">每日推荐</p><hr>
-<infinite-box></infinite-box>
+<infinite-box v-on:playThis="goup"  ></infinite-box>
  </div>
 </template>
 <script>
@@ -41,7 +41,9 @@ export default {
     };
   },
   methods: {
-    
+    goup(mid){
+        this.$emit("playThis", mid);
+    },
     getBanner() {
       var url = `banner`;
       this.$http.get(url).then(result => {

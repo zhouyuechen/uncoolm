@@ -10,10 +10,16 @@ import Gedan from '@/components/listen/gedan'
 import Geshou from '@/components/listen/geshou'
 import Diantai from '@/components/listen/diantai'
 import Search from '@/components/search'
+import SingerDetails from '@/components/details/singerDetails'
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+      path: '/singerdetails/:sid',
+       component: SingerDetails,
+       props:true
+    },
     {
       path: '/search/:kw',
        component: Search,

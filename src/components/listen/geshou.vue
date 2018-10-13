@@ -1,13 +1,19 @@
 <template>
  <div class="geshou">
  <h3>歌手分类</h3><hr>
- <mt-index-list>
-  <mt-index-section class="index"  v-for="(item,i) in singer" :key="i" :index="item.tp">
-    <mt-cell :title="item.code.toString()"></mt-cell>
-   
-  </mt-index-section>
+  <ul class="hot" >
   
-</mt-index-list>
+    <li v-text="item.tp"  v-for="(item,i) in singer" :key="i" ref="hots"
+    @click="getPeople(item.code)"
+     ></li>
+   
+  </ul><hr>
+  <mt-cell v-for="(item,i) in singer2" :key="i"
+  :title="item.name"
+  @click.native="getDetails(item.id)"
+  is-link
+  value="查看详情">
+</mt-cell>
  </div>
 </template>
 <script>
@@ -16,29 +22,58 @@
   export default{
     data(){
       return {
-        singer:[{tp:"入驻歌手" ,code:5001},
-        {tp:"华语男歌手" ,code:1001},
-        {tp:"华语女歌手" ,code:1002},
-        {tp:"华语组合/乐队" ,code:1003},
-        {tp:"欧美男歌手" ,code:2001},
-        {tp:"欧美女歌手" ,code:2002},
-        {tp:"欧美组合/乐队" ,code:2003},
-        {tp:"日本男歌手" ,code:6001},
-        {tp:"日本女歌手" ,code:6002},
-        {tp:"韩国男歌手" ,code:7001},
-        {tp:"韩国女歌手" ,code:7002},
-        {tp:"韩国组合/乐队" ,code:7003},
-        {tp:"其他男歌手" ,code:4001},
-        {tp:"其他女歌手" ,code:4002},
-        {tp:"其他组合/乐队" ,code:4003}
-                            ]
+        is_active:"",
+        singer:[{tp:"入驻歌手" ,code:5001,people:[]},
+        {tp:"华语男歌手" ,code:1001,people:[]},
+        {tp:"华语女歌手" ,code:1002,people:[]},
+        {tp:"华语组合/乐队" ,code:1003,people:[]},
+        {tp:"欧美男歌手" ,code:2001,people:[]},
+        {tp:"欧美女歌手" ,code:2002,people:[]},
+        {tp:"欧美组合/乐队" ,code:2003,people:[]},
+        {tp:"日本男歌手" ,code:6001,people:[]},
+        {tp:"日本女歌手" ,code:6002,people:[]},
+        {tp:"韩国男歌手" ,code:7001,people:[]},
+        {tp:"韩国女歌手" ,code:7002,people:[]},
+        {tp:"韩国组合/乐队" ,code:7003,people:[]},
+        {tp:"其他男歌手" ,code:4001,people:[]},
+        {tp:"其他女歌手" ,code:4002,people:[]},
+        {tp:"其他组合/乐队" ,code:4003,people:[]}
+                            ],
+        singer2:[]  
       }
     },
     methods:{
+     getPeople(code){
+        
+           var url=`artist/list?cat=${code}&offset=0&limit=50`;
+       this.$http.get(url).then(result => {
+        this.singer2= result.body.artists;
+        
+       });
      
+     
+     },
+      changeC() {
+      /* 随机背景颜色 */
+      for (var e = 0; e < this.$refs.hots.length; e++) {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        this.$refs.hots[e].style.backgroundColor = `rgba(${r},${g},${b},0.9 )`;
+      }
+     },
+     getDetails(sid){
+           this.$router.push(`/singerdetails/${sid}`);
+     }
+    
     },
     created(){
       
+    },
+    mounted(){
+      setTimeout(() => {
+      this.changeC();
+    }, 300);
     }
   }
 </script>
@@ -56,5 +91,32 @@ $l50: 50%;
        color: $topc;
        font-weight: 500;
     }
+    .hot {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding: 0;
+
+  flex-wrap: wrap;
+  p {
+    width: 100%;
+    text-align: left;
+    border-bottom: 2px dashed #666;
+    font-size: 1.1rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  li {
+    list-style: none;
+    max-width: 50%;
+    min-width: 20%;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    border-radius: 10px;
+    background-color: transparent;
+    margin: 0.1rem 0;
+    color: white;
+  }
+}
   }
 </style>

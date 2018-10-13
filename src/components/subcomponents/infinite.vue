@@ -6,7 +6,7 @@
   infinite-scroll-disabled="loading"
   infinite-scroll-distance="30" infinite-scroll-immediate-check="loading2" >
   <li v-for="(item,i) in list" :key="i">
-      <img v-lazy="item.song.album.picUrl" alt="加载失败"> 
+      <img v-lazy="item.song.album.picUrl" alt="加载失败"  @click="playthis(item.id)"  > 
       <div><p>{{item.name}}</p><p>{{item.song.artists[0].name}}</p></div>
       <p>发布时间<br>{{item.song.album.publishTime|dateFormat}}</p>
 
@@ -28,6 +28,9 @@
       }
     },
     methods:{
+      playthis(mid){
+        this.$emit("playThis", mid);
+      },
         getsimi(){
         
       var url = `personalized/newsong`;
