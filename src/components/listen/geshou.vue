@@ -10,7 +10,7 @@
   </ul><hr>
   <mt-cell v-for="(item,i) in singer2" :key="i"
   :title="item.name"
-  @click.native="getDetails(item.id)"
+  @click.native="getDetails(item.name)"
   is-link
   value="查看详情">
 </mt-cell>
@@ -62,8 +62,8 @@
         this.$refs.hots[e].style.backgroundColor = `rgba(${r},${g},${b},0.9 )`;
       }
      },
-     getDetails(sid){
-           this.$router.push(`/singerdetails/${sid}`);
+     getDetails(val){
+           this.$emit("search_val", val);
      }
     
     },

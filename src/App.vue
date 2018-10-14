@@ -27,7 +27,7 @@
       <button :class="back_btn" @click="backTop()"  >TOP</button>
 <!-- 底部播放器 -->
     <div class="play_box">
-      <div class="play_pic"><img :src="picurl" alt="加载失败"></div>
+      <div class="play_pic"   @click="showSong"   ><img :src="picurl" alt="加载失败"></div>
       <audio ref='player'  :src="musicurl" autoplay auto ></audio>
       <div  class="pro" >
       <mt-progress  class="pros" :bar-height="4" :value="prec"  >
@@ -39,11 +39,26 @@
       <div class="text">
         <span >{{this.songname}}</span> <span>{{this.arname}}</span>
       </div>
-      <mt-button class="btn" slot="right"  @click.native="playmusic()" ><img  :src="play_img" height="32" width="32" slot="icon"></mt-button>
+      <mt-button class="btn" slot="right"  @click.native="playmusic" ><img  :src="play_img" height="32" width="32" slot="icon"></mt-button>
       <mt-button class="btn" slot="right"  @click.native="nextmusic()" ><img   src="./assets/next.png" height="32" width="32" slot="icon"></mt-button>
     </div>
        
     </div>
+    <!-- 播放详情页面 -->
+    <div @touchmove="handleTouchmove" class="warp" style="overflow-y:scroll">
+      <mt-popup v-model="popupVisible" lockScroll=true position="bottom" class="mint-popup" :modal="false">
+     <div class="back">
+     <mt-button @click.native="back" size="large" type="primary">返回</mt-button><p v-text="songname"></p></div>
+      <p v-if="lrc"  v-text="arname"></p>
+   <img v-if="lrc" :src="song.al.picUrl" alt="加载失败" class="re">
+   <div v-if="lrc" class="c">
+          <div class="tc font30 mb15">{{g}}</div>
+      </div>
+    <audio class="songD"  id="player" ref='player2'  :src="musicurl"  auto  controls ></audio>
+     
+      <div ></div>
+     
+    </mt-popup></div>
   </div>
 </template>
 
@@ -56,6 +71,7 @@ export default {
   name: "App",
    data() {
     return {
+
       play_img:`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QjYzRjgzOTNDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QjYzRjgzOTRDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpCNjNGODM5MUNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpCNjNGODM5MkNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pl/OESoAAAHxSURBVHja7N27SgNBFIDhmdmsrpdoLETRysLCJnipFETt8ww+QMRCe43oAwj6JiJYesNSYmdhkVioWCkJkiXZ7DGKdgpmwoY1/H+TwHIY8s1k29Eioqj9aeCBB57+OfzE8bbaGVtO/vQslND5bW736eJ1IzU3tf96fVvI7FqtmxtZHBWj/WbmTKi8t5qfzC5k7qKGT0S9wM7jWclmroGu1pPTs42v+WZn1/rS83v3p1ehl9DNzho/kKzKmKhdIl1ga3ypp5X5w/JN3mZuuD9VsEH/+iu25d1rVIyz3Tg/qHrW795OgN97OK+0Mu+ItnoVamOCuB/FWJ/4Tg544IEn4IEn4IEn4IEn4IEn4IEHHgLggSfggSfggSfggSfggSfggQeegAeegAeegAeegAeegAeegAceeAIeeAIeeAIeeAIeeAIeeAIeeOAJeOAJeOAJeOAJeOAJeOAJeOCBJ+CBJ+CBJ+CBJ+CBJ+CBJ+CBBz6mDbie1X2wruP41otKB8C3enX0S1BxbebKfmXYelHdAfBDbm+tlfmEMlY3GNfDuqergcT5xEd6S/1m8SSYfJZLrfXHQQoan+H3DxMlv256XaS7yzjlnDotr86sNL3uQSmfT5e8o2o9SH6u+dcNE3FT7mCxHfBapE1bTMDHoXcBBgCzhYMOr3tY2AAAAABJRU5ErkJggg==`,
       selected: "listen",
       prec: 0,
@@ -74,12 +90,72 @@ export default {
      zhanwei:"搜索",
      search_value:"",
      search_res:[],
-     back_btn:"backtop"
-     
-
+     back_btn:"backtop",
+     popupVisible:false,
+     /* 播放详情页数据 */
+     g:'',
+     gd:{
+        up:null,
+        down:null
+       },
+     p:null,
+     lrc:"",
+     lrcObj:null,
+     height:'auto'
     };
   },
   methods: {
+    jx(){/* 解析歌词的函数 */
+      var lyrics = this.lrc.split("\n");
+      var lrcObj = {};
+      for(var i=0;i<lyrics.length;i++){
+          var lyric = decodeURIComponent(lyrics[i]);
+          var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
+          var timeRegExpArr = lyric.match(timeReg);
+          if(!timeRegExpArr)continue;
+          var clause = lyric.replace(timeReg,'');
+          for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
+              var t = timeRegExpArr[k];
+              var min = Number(String(t.match(/\[\d*/i)).slice(1)),
+                  sec = Number(String(t.match(/\:\d*/i)).slice(1));
+              var time = min * 60 + sec;
+              lrcObj[time] = clause;
+          }
+      }
+      return lrcObj;
+    },
+    showSong(){
+         this.popupVisible=true;
+         this.playmusic(66);
+          var url=`lyric?id=${this.mid}`;
+          this.$http.get(url).then(result => {
+         this.lrc=result.body.lrc.lyric;
+         this.p = document.querySelector("#player")
+        let _this = this;
+        this.lrcObj = this.jx();
+        console.log(this.lrcObj);
+        this.p.currentTime= this.timeNow;
+        this.p.play();
+         this.p.addEventListener("timeupdate",function(){
+      let obj = _this.lrcObj[Math.floor(this.currentTime)];
+      if(obj!=undefined){
+        _this.g = obj;
+      }
+    });
+    this.height =window.innerHeight+'px';
+    window.onresize  = ()=>{
+      _this.height =window.innerHeight+'px';
+    }
+      });
+    },
+     back(){
+        this.popupVisible=false;
+       this.playmusic();
+       this.timeNow =this.p.currentTime;
+       this.$refs.player.currentTime=this.timeNow;
+       this.p.pause();
+      },
+    handleTouchmove(e){e.preventDefault()},
     letsSearch(){
         if(this.search_value===""){
           this.showSearch();
@@ -141,7 +217,7 @@ export default {
          this.play_img='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUMxQTBFRDJDQkQ4MTFFODkzNjBERkM4MDM0NERFNTIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUMxQTBFRDNDQkQ4MTFFODkzNjBERkM4MDM0NERFNTIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFQzFBMEVEMENCRDgxMUU4OTM2MERGQzgwMzQ0REU1MiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFQzFBMEVEMUNCRDgxMUU4OTM2MERGQzgwMzQ0REU1MiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PhOxM5gAAAYISURBVHja7J1bbBRV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';
       }
        
-      }else if(val==77){this.$refs.player.play();
+      }else if(val==77){/* this.$refs.player.play(); */
       this.play_img='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QjYzRjgzOTNDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QjYzRjgzOTRDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpCNjNGODM5MUNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpCNjNGODM5MkNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pl/OESoAAAHxSURBVHja7N27SgNBFIDhmdmsrpdoLETRysLCJnipFETt8ww+QMRCe43oAwj6JiJYesNSYmdhkVioWCkJkiXZ7DGKdgpmwoY1/H+TwHIY8s1k29Eioqj9aeCBB57+OfzE8bbaGVtO/vQslND5bW736eJ1IzU3tf96fVvI7FqtmxtZHBWj/WbmTKi8t5qfzC5k7qKGT0S9wM7jWclmroGu1pPTs42v+WZn1/rS83v3p1ehl9DNzho/kKzKmKhdIl1ga3ypp5X5w/JN3mZuuD9VsEH/+iu25d1rVIyz3Tg/qHrW795OgN97OK+0Mu+ItnoVamOCuB/FWJ/4Tg544IEn4IEn4IEn4IEn4IEn4IEHHgLggSfggSfggSfggSfggSfggQeegAeegAeegAeegAeegAeegAceeAIeeAIeeAIeeAIeeAIeeAIeeOAJeOAJeOAJeOAJeOAJeOAJeOCBJ+CBJ+CBJ+CBJ+CBJ+CBJ+CBBz6mDbie1X2wruP41otKB8C3enX0S1BxbebKfmXYelHdAfBDbm+tlfmEMlY3GNfDuqergcT5xEd6S/1m8SSYfJZLrfXHQQoan+H3DxMlv256XaS7yzjlnDotr86sNL3uQSmfT5e8o2o9SH6u+dcNE3FT7mCxHfBapE1bTMDHoXcBBgCzhYMOr3tY2AAAAABJRU5ErkJggg==';
       }
       else
@@ -325,12 +401,90 @@ $l50: 50%;
     right: 1rem;
     bottom: 6rem;
     text-align: center;
-    background-color: $topc;
+    background-color: black;
     font-size: 1rem;
     padding: 0;
     color: white;
     font-weight: 800
   }
+  /* 播放详情样式 */
+  @keyframes rotate360
+    {
+     from {transform: rotate(0deg)}
+    to {transform: rotate(360deg)}
+    }
+  .mint-popup{
+    width: $l100;
+    height: $l100;
+    background-color: black;
+    
+
+    img.re{
+      width: 60%;
+      border-radius:50%;
+      display: block;
+      margin: 1rem auto;
+      border: .5rem solid rgba($color: #666, $alpha: .7);
+      animation:  rotate360 30s linear  infinite ;
+    }
+    .c{
+      color:$topc;
+      font-size: 1.3rem;
+      margin: 2rem auto;
+      display: block;
+
+    }
+    .songD{
+      width: 100%;
+      position: fixed;
+      bottom: 4rem;
+      left:0;
+      height: 45px;
+      border-top: .4rem solid $topc;
+      border-bottom: .4rem solid $topc;
+      
+    }
+   .back{
+        position: relative;
+        display: flex;
+         width: $l100;
+     height: 3rem;
+     background-color: black;
+     color: $topc;
+     align-items: center;
+     justify-content: space-around;
+    
+        .mint-button {
+          width: 3rem;
+          position: absolute;
+          left: 1rem;
+         
+          padding: 0;
+          height: 3rem;
+          color: $topc;
+          background-color: transparent;
+
+
+        }
+        p,&+p{
+          line-height: 3rem;
+          font-size: 1.5rem;
+          font-weight: 500;
+          color: $topc;
+          margin: 0;
+          
+        }
+        &+p{
+          font-size: 1rem;
+          line-height: 2rem;
+           
+          background-color: black;
+
+        }
+
+      }
+  }
+
 }
 .bg {
   background-color: $bgc;

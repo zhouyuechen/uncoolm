@@ -24,12 +24,12 @@
      
     
    <!-- 评论部分 -->
-   <ul class="comment" v-if="comments[1]" >
+    <ul class="comment" v-if="comments[1]" >
      <li v-for="(item,i) in comments"  :key="i">
         <div class="com1"><img :src="item.user.avatarUrl" alt="加载失败"> <span>{{item.user.nickname}}</span></div>
       <p>{{item.content}}</p>
      </li>
-   </ul>
+    </ul>
    </div>
     
     </mt-popup></div>
