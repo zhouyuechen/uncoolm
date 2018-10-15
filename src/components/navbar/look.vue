@@ -36,7 +36,7 @@
     <!-- 显示推荐的MV -->
   <ul class="res"  v-infinite-scroll="loadMore"
   infinite-scroll-disabled="loading"
-  infinite-scroll-distance="30" infinite-scroll-immediate-check="true" >
+  infinite-scroll-distance="10" infinite-scroll-immediate-check="true" >
     <li v-for="(item,i) in data" :key="i" class="mvs"  > 
         <div class="mv_de" ref="mvs">
           <img v-lazy="item.cover" alt="加载失败" @click="playVideo(item.id)"  >
