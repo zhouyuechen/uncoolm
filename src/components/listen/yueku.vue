@@ -81,7 +81,7 @@
           return;
         }
         this.rank_show = this.rank_show.concat(this.rank.slice(last , last + 10));
-        console.log(this.rank_show);
+       
 
         this.loading = false;
         console.log("执行");
@@ -132,7 +132,7 @@
         var url2=`playlist/catlist`;
       this.$http.get(url2).then(result => {
         this.kind_list = result.body.sub.slice(0,50);
-        console.log(this.kind_list);
+       
        
       });
     }
@@ -144,6 +144,9 @@ $topc: rgba(32, 179, 125, 1);
 $l20: 20%;
 $l100: 100%;
 $l50: 50%;
+.yueku{
+  -webkit-overflow-scrolling: touch;
+}
 .nav {
   display: flex;
   justify-content: space-between;

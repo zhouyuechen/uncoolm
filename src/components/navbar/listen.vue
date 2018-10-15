@@ -48,7 +48,7 @@ export default {
       var url = `banner`;
       this.$http.get(url).then(result => {
         this.list = result.body.banners;
-        console.log(this.list);
+        
         this.sp_class=`nolook`;
         this.sw_class=`look2`;
         
@@ -88,6 +88,9 @@ $topc:rgba(32, 179, 125, 1);
 }
 .listen .mint-swipe img {
   width: 100%;
+}
+.listen{
+    -webkit-overflow-scrolling: touch;
 }
 .nolook{
     display: none; 

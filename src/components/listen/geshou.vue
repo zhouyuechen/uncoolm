@@ -87,6 +87,7 @@ $l50: 50%;
     color: $topc;
   }
   .geshou{
+    -webkit-overflow-scrolling: touch;
     .mint-indexlist-navitem{
        color: $topc;
        font-weight: 500;

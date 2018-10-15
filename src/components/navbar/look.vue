@@ -4,7 +4,7 @@
  <!-- mv播放区 -->
  <div @touchmove="handleTouchmove" class="warp" style="overflow-y:scroll"><mt-popup v-model="popupVisible" lockScroll=true position="right" class="mint-popup-3" :modal="false">
    <div class="back">
-     <mt-button @click.native="back" size="large" type="primary">返回</mt-button>{{mvDetails.name}}</div>
+     <mt-button @click.native="back" size="large" type="primary">返回</mt-button><span>{{mvDetails.name}}</span></div>
       
    <div v-if="mvDetails.brs" class="video"> <video class="video_self" :src="mvDetails.brs[240]" ref="video"  controls  :poster="mvDetails.cover" ></video>
    <div class="info1"><p>{{mvDetails.artists[0].name}}</p><p>播放次数：{{mvDetails.playCount}}</p></div>
@@ -131,8 +131,7 @@
       this.$http.get(url).then(result => {
         this.res = result.body.data;
         this.data=this.res.slice(0,5);
-        console.log(this.res);
-         console.log(this.data);
+       
          setTimeout(() => {
       var h =Math.floor(window.innerWidth*0.56);
         for(var i=0;i<this.data.length;i++)
@@ -151,11 +150,21 @@ $topc: rgba(32, 179, 125, 1);
 $l20: 20%;
 $l100: 100%;
 $l50: 50%;
- .look{
+ .look{ -webkit-overflow-scrolling: touch;
    .back{
      height: 3rem;
      color: $topc;
      line-height: 3rem;
+     span{
+      white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+       height: 3rem;
+     color: $topc;
+     line-height: 3rem;
+     display: block;
+     width: 60%;
+     }
 
    }
    .warp{

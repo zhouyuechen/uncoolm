@@ -91,6 +91,7 @@ color: $topc;
 font-size: 1.1rem;
 }
   .infinite{
+    -webkit-overflow-scrolling: touch;
       &>ul{
           padding: 0;
           width: 100%;

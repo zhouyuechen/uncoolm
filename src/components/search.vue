@@ -3,7 +3,7 @@
   <ul class="hot" >
    <p>热门搜索</p>
     <li v-text="item.first"  v-for="(item,i) in hot" :key="i" ref="hots"
-    @click="search_val(item.first)"
+    @touchend="search_val(item.first)"
      ></li>
    
   </ul>
@@ -13,7 +13,7 @@
   infinite-scroll-distance="10" infinite-scroll-immediate-check="true" >
     <li v-for="(item,i) in data" :key="i" > 
         <div class="info"><p>{{item.name}}</p><span>{{item.artists[0].name}}</span></div>
-        <mt-button class="play" @click="playthis(item.id)" >▶</mt-button>
+        <mt-button class="play" @touchend="playthis(item.id)" >▶</mt-button>
         </li>
    
  </ul>
@@ -64,7 +64,7 @@ export default {
           return;
         }
         this.data = this.data.concat(this.res.slice(last , last + 5));
-        console.log(this.data);
+        
 
         this.loading = false;
         console.log("执行");
@@ -122,7 +122,9 @@ $topc: rgba(32, 179, 125, 1);
 $l20: 20%;
 $l100: 100%;
 $l50: 50%;
-
+_search{
+  -webkit-overflow-scrolling: touch;
+}
 .hot {
   display: flex;
   justify-content: space-around;

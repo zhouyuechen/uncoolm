@@ -65,6 +65,9 @@ $topc: rgba(32, 179, 125, 1);
 $l20: 20%;
 $l100: 100%;
 $l50: 50%;
+.diantai{
+  -webkit-overflow-scrolling: touch;
+}
   .h3{
     color: $topc;
   }

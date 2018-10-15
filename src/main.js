@@ -17,7 +17,7 @@ import "./lib/mui/css/icons-extra.css"
 import VueResource from "vue-resource"
 //4:加载(注册)VueResource
 Vue.use(VueResource)
-Vue.http.options.root = "http://118.24.90.238:3000/";
+Vue.http.options.root = "http://localhost:4000/";
 //7:设置全局ajax post 访问格式
 Vue.http.options.emulateJSON =  true;
 Vue.config.productionTip = false;

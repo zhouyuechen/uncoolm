@@ -69,6 +69,7 @@ $l20: 20%;
 $l100: 100%;
 $l50: 50%;
  .gedan{
+   -webkit-overflow-scrolling: touch;
    h2{
      color: $topc;
      margin: 1rem 0;
