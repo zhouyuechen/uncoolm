@@ -13,7 +13,7 @@
   infinite-scroll-distance="10" infinite-scroll-immediate-check="true" >
     <li v-for="(item,i) in data" :key="i" > 
         <div class="info"><p>{{item.name}}</p><span>{{item.artists[0].name}}</span></div>
-        <mt-button class="play" @touchend="playthis(item.id)" >▶</mt-button>
+        <mt-button class="play" @touchend.native="playthis(item.id)" >▶</mt-button>
         </li>
    
  </ul>

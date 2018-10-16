@@ -17,7 +17,7 @@
   infinite-scroll-distance="10" infinite-scroll-immediate-check="true" >
     <li v-for="(item,i) in rank_show" :key="i" > 
         <div class="num"><i>{{i+1}}</i></div> <div class="info"><p>{{item.name}}</p><span>{{item.ar[0].name}}</span></div>
-        <mt-button class="play" @click="playthis(item.id)" >▶</mt-button>
+        <mt-button class="play" @touchend.native="playthis(item.id)" >▶</mt-button>
         </li>
    
  </ul>
