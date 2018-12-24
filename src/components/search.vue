@@ -64,14 +64,11 @@ export default {
           return;
         }
         this.data = this.data.concat(this.res.slice(last , last + 5));
-        
-
         this.loading = false;
         console.log("执行");
       }, 1000);
     },
-    search_val(val) {
-      /* 点击热搜修改搜索框的值 */
+    search_val(val) { /* 点击热搜修改搜索框的值 */
       this.$emit("search_val", val);
     },
     changeC() {
@@ -123,14 +120,13 @@ $l20: 20%;
 $l100: 100%;
 $l50: 50%;
 _search{
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;//适配ios系统的滑动功能
 }
 .hot {
   display: flex;
   justify-content: space-around;
   width: 100%;
   padding: 0;
-
   flex-wrap: wrap;
   p {
     width: 100%;

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import Listen from '@/components/navbar/listen'
 import Sing from '@/components/navbar/sing'
 import Look from '@/components/navbar/look'
@@ -14,52 +13,48 @@ import SingerDetails from '@/components/details/singerDetails'
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
+  routes: [{
       path: '/singerdetails/:sid',
-       component: SingerDetails,
-       props:true
+      component: SingerDetails,
+      props: true
     },
     {
       path: '/search/:kw',
-       component: Search,
-       props:true
+      component: Search,
+      props: true
     },
     {
       path: '/',
-       component: Listen
+      component: Listen
     },
     {
       path: '/listen',
       component: Listen
-    }
-    ,
+    },
     {
       path: '/yueku',
-       component: Yueku
+      component: Yueku
     },
     {
       path: '/gedan',
-       component: Gedan
+      component: Gedan
     },
     {
       path: '/geshou',
-       component: Geshou
+      component: Geshou
     },
     {
       path: '/diantai',
-       component: Diantai
+      component: Diantai
     },
     {
       path: '/sing',
       component: Sing
-    }
-    ,
+    },
     {
       path: '/look',
       component: Look
-    }
-    ,
+    },
     {
       path: '/my',
       component: My
