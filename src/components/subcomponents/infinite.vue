@@ -31,7 +31,7 @@
       playthis(mid){
         this.$emit("playThis", mid);
       },
-        getsimi(){
+      getsimi(){//获取推荐新歌
         
       var url = `personalized/newsong`;
       
@@ -43,18 +43,6 @@
           this.getsimi();
           return;
         }
-          console.log(this.list);
-       /*  if(bb==undefined){
-          this.getsimi();
-          return;
-        } */
-        
-         
-       /*  for (let i = 0; i < 5; i++) {
-        this.list.push(bb[i]);
-       } */
-       /* console.log(this.list); */
-       
        
       }); 
 
@@ -64,12 +52,9 @@
       console.log("执行");
        setTimeout(() => {
            
-         
-         
         for (let i = 0; i < 5; i++) {
         this.list.push(i);
        }
-       console.log(this.list);
        
        this.loading = false;
       

@@ -42,7 +42,6 @@ export default {
   methods: {
     playthis(mid){
       this.mid=mid;
-    
         this.$emit("playThis", this.mid);
       },
     loadMore() {
@@ -98,7 +97,7 @@ export default {
       }
     },
      kw: {
-      /* 监听父组件传来的res */
+      /* 监听父组件传来的kw */
       immediate: true,
       handler: function() {
         this.search_val(this.kw);
@@ -108,7 +107,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.changeC();
-    }, 500);
+    }, 400);
   },
   updated() {}
 };

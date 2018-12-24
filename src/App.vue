@@ -21,7 +21,7 @@
     :placeholder="zhanwei"
     v-model="search_value"
    >
-   <button @touchend="letsSearch">🔍</button>
+   <button @touchend="letsSearch"></button>
   </div>
   <!-- 组件显示区 -->
   <router-view
@@ -39,7 +39,7 @@
    <div class="play_pic" @touchend="showSong">
     <img :src="picurl" alt="加载失败">
    </div>
-   <audio ref="player" id="au1" :src="musicurl" autoplay auto></audio>
+   <audio ref="player" id="au1" :src="musicurl" autoplay  ></audio>
    <div class="pro">
     <mt-progress class="pros" :bar-height="4" :value="prec">
      <div slot="start" v-if="timeNow">{{this.timeNow|time}}</div>
@@ -120,7 +120,8 @@ export default {
    p1: null,
    lrc: "",
    lrcObj: null,
-   height: "auto"
+   height: "auto",
+   list:[]
   };
  },
  methods: {
@@ -157,10 +158,10 @@ export default {
    this.p1.currentTime = this.timeNow;
    this.p.pause();
   },
-  handleTouchmove(e) {
+  handleTouchmove(e) {//取消默认事件
    e.preventDefault();
   },
-  letsSearch() {
+  letsSearch() {//根据关键词搜索
    if (this.search_value === "") {
     this.showSearch();
     return;
@@ -179,7 +180,7 @@ export default {
   },
   show() {
    Toast({
-    message: "这里是不酷猫，更多精彩"
+    message: "这里是不酷猫，更多精彩敬请期待"
     /* iconClass: 'icon icon-success' */
    });
   },
@@ -224,15 +225,15 @@ export default {
    }
   },
   playmusic(val) {
-   if (val == 66) {
+   if (val == "openmv") {
     if (this.$refs.player.paused) {
      return;
     } else {
      this.$refs.player.pause();
      this.play_img = "btn bg_s";
     }
-   } else if (val == 77) {
-    /* this.$refs.player.play(); */
+   } else if (val == "closemv") {
+     this.$refs.player.play(); 
     this.play_img = "btn bg_s";
    } else {
     if (this.$refs.player.paused) {
@@ -270,12 +271,12 @@ export default {
   getsong(mid = parseInt(300000 + Math.floor(Math.random() * 80000))) {//获取歌曲详情
    this.mid = mid;
    var url = `song/detail?ids=${mid}`;
-   var url2 = `music/url?id=${mid}`;
+   var url2 = `song/url?id=${mid}`;
    var load = Toast({
     message: "新歌加载中...",
     position: "bottom"
    });
-   this.$http.get(url).then(result => {
+   this.$http.get(url).then(result => {//获取歌曲文字详情
     this.song = result.body.songs[0];
     if (result.body.songs[0] == undefined) {
      Toast("sorry,这首歌没有版权");
@@ -288,15 +289,15 @@ export default {
     this.addEventListeners();
    });
 
-   this.$http.get(url2).then(result => {
+   this.$http.get(url2).then(result => {//获取音频url
     this.musicurl = result.body.data[0].url;
-    this.$refs.player.load();
+   
     load.close();
     this.addEventListeners();
    });
    var url3 = `lyric?id=${this.mid}`;
-   this.$http.get(url3).then(result => {
-    if (result.body.nolyric) {
+   this.$http.get(url3).then(result => {//获取歌词
+    if (result.body.nolyric) {//如果没有歌词
      this.lrc = "mei";
      this.lrcObj = { 0: "这首歌没有歌词哦O(∩_∩)O" };
      return;
@@ -305,7 +306,7 @@ export default {
     this.p = document.querySelector("#player");
     let _this = this;
     this.lrcObj = this.jx();
-    this.p.addEventListener("timeupdate", function() {
+    this.p.addEventListener("timeupdate", function() {//绑定歌词滚动事件
      let obj = _this.lrcObj[Math.floor(this.currentTime)];
      if (obj != undefined) {
       _this.g = obj;
@@ -316,7 +317,6 @@ export default {
      _this.height = window.innerHeight + "px";
     };
    });
-   console.log(this.mid);
   },
   check(mid) {
    var url = `song/detail?ids=${this.mid}`;
@@ -324,10 +324,28 @@ export default {
     return result.success;
    });
   },
+   getnewsong(){//获取推荐新歌
+        
+      var url = `personalized/newsong`;
+      
+     
+      this.$http.get(url).then(result => {
+        
+          /* this.list=result.body.result;
+          console.log(this.list[parseInt(Math.random()*10)]);
+         if(this.list==undefined){
+          this.getnewsong();
+          return;
+        } */
+        this.getsong(result.body.result[parseInt(Math.random()*10)].id);
+       
+      }); 
+
+        },
   getsong2(mid) {//歌曲详情页的获取
    this.mid = mid;
    var url = `song/detail?ids=${this.mid}`;
-   var url2 = `music/url?id=${this.mid}`;
+   var url2 = `song/url?id=${this.mid}`;
    var load = Toast({
     message: "新歌加载中...",
     position: "bottom"
@@ -379,9 +397,8 @@ export default {
      _this.height = window.innerHeight + "px";
     };
    });
-   console.log(this.mid);
   },
-  backTop(e) {
+  backTop(e) {//点击top返回顶部
    var touch = e.touches[0];
    console.log(Number(touch.pageX), Number(touch.pageY));
    var timer = setInterval(function() {
@@ -402,13 +419,13 @@ export default {
    }, 50);
   }
  },
- components: {
+ components: {//注册子组件
   listen,
   search
  },
 
  watch: {
-  selected() {
+  selected() {//导航条的选中高亮，监听selected变量
    if (this.selected == 0) {
     var bb = document.querySelector(".mint-navbar .mint-tab-item.is-selected");
     console.log(bb);
@@ -418,21 +435,31 @@ export default {
   },
   isPlay() {}
  },
- mounted() {
-  this.getsong();
-  HTMLAudioElement.prototype._play = HTMLAudioElement.prototype.play;
-  HTMLAudioElement.prototype._load = HTMLAudioElement.prototype.load;
-  HTMLAudioElement.prototype.play = function() {
-   // 禁止load操作
-   this._lockLoad = true;
-   this._play();
-  };
-  HTMLAudioElement.prototype.load = function() {
-   this._lockLoad || this._load();
-  };
-  this.p1 = document.getElementById("au1");
+ created(){
+   this.getnewsong();
+   
  },
- beforeDestroyed() {
+ mounted() {//挂载完后执行一次获取随机音乐，
+  this.getnewsong();
+  /*  HTMLAudioElement.prototype._play = HTMLAudioElement.prototype.play;
+        HTMLAudioElement.prototype._load = HTMLAudioElement.prototype.load;
+        HTMLAudioElement.prototype.play = function() {
+         // 禁止load操作
+         this._lockLoad = true;
+         this._play();
+        };
+        HTMLAudioElement.prototype.load = function() {
+         this._lockLoad || this._load();
+        }; */
+        this.p1 = document.getElementById("au1");
+        setTimeout(()=>{
+        this.playmusic1();
+        },200)
+       
+  
+  
+ },
+ beforeDestroyed() {//销毁前解除绑定
   this.removeEventListeners();
  }
 };
@@ -654,15 +681,15 @@ $l50: 50%;
   position: absolute;
   top: 5%;
   right: 5%;
-  background-image: url("assets/next.png");
+  background-image: url("//img.hicdn.cn/fed/images/20181224/45e82d8b7107022c64cccce3b57155fe.png");
  }
  .btn.bg_s {
   right: 22%;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QjYzRjgzOTNDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QjYzRjgzOTRDQkQ4MTFFODhENTE5Q0M0QzI4NkZGNUQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpCNjNGODM5MUNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpCNjNGODM5MkNCRDgxMUU4OEQ1MTlDQzRDMjg2RkY1RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pl/OESoAAAHxSURBVHja7N27SgNBFIDhmdmsrpdoLETRysLCJnipFETt8ww+QMRCe43oAwj6JiJYesNSYmdhkVioWCkJkiXZ7DGKdgpmwoY1/H+TwHIY8s1k29Eioqj9aeCBB57+OfzE8bbaGVtO/vQslND5bW736eJ1IzU3tf96fVvI7FqtmxtZHBWj/WbmTKi8t5qfzC5k7qKGT0S9wM7jWclmroGu1pPTs42v+WZn1/rS83v3p1ehl9DNzho/kKzKmKhdIl1ga3ypp5X5w/JN3mZuuD9VsEH/+iu25d1rVIyz3Tg/qHrW795OgN97OK+0Mu+ItnoVamOCuB/FWJ/4Tg544IEn4IEn4IEn4IEn4IEn4IEHHgLggSfggSfggSfggSfggSfggQeegAeegAeegAeegAeegAeegAceeAIeeAIeeAIeeAIeeAIeeAIeeOAJeOAJeOAJeOAJeOAJeOAJeOCBJ+CBJ+CBJ+CBJ+CBJ+CBJ+CBBz6mDbie1X2wruP41otKB8C3enX0S1BxbebKfmXYelHdAfBDbm+tlfmEMlY3GNfDuqergcT5xEd6S/1m8SSYfJZLrfXHQQoan+H3DxMlv256XaS7yzjlnDotr86sNL3uQSmfT5e8o2o9SH6u+dcNE3FT7mCxHfBapE1bTMDHoXcBBgCzhYMOr3tY2AAAAABJRU5ErkJggg==");
+  background-image: url("//img.hicdn.cn/fed/images/20181224/4dd3b93e186a82a873e522a6809cec90.png");
  }
  .btn.bg_p {
   right: 22%;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAYAAACq0qNuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUMxQTBFRDJDQkQ4MTFFODkzNjBERkM4MDM0NERFNTIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUMxQTBFRDNDQkQ4MTFFODkzNjBERkM4MDM0NERFNTIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFQzFBMEVEMENCRDgxMUU4OTM2MERGQzgwMzQ0REU1MiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFQzFBMEVEMUNCRDgxMUU4OTM2MERGQzgwMzQ0REU1MiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PhOxM5gAAAYISURBVHja7J1bbBRVHIfPXHZnLzPd7bbdBbRYaLlIbdneACHEmFAfCGp88hKiUQOBgA8YI/EBHogxUUMiBoOBiAkJgQcfiD4QaWLQRFPTewsI3ZaKjcBu7bbLzF5m5+aehiYUFRZ398zuzv972WZ2tnPy5czvnDNnZg5lGAYCyEOBeBAP4oEiF7/uzMGLSyuqTvUZ0ydB5UImth164Pd0Lv98SkDPZKR/FRDRhZWcby3ozp6cxFOansafYQF1jsrRwfokdwyUEhCPKGrB78ed8i5a1VMdNv/zoLaA4jOS5fu36SzN9SiRb72i3peJn0ZQXADxmo1x/td3swLdGkpODzZpnvdBM4Eafy8GTbEjTOxjWtETED95FI9jJav9bLQTx09tnD0DyvNR4zVdeZT9J93qK/hEaFSFAyA+BwwKUf/nd5dZ8ZAzrv5h5fihzTpw0s3W4vipEdFFgeFqQTxh8Og3kUz81mL3bwHxhNHsjHsgHemqkLSRdnvgORBPmDs881RvOvy9T9S7QbwJRAV6PaXpciuq2gHiCWMwtL0fTR/3icbPQc6/GcQTr/3UxkE58tNiif4OxJvALV7fhk+EVuTbAeJNoB9Fj1eKes9azr8RxBNmRqDbR+K3f2hIOY6CeMLgC3RjjtSeufihSi9+aFQG9BvR44skdAHEm8BtHnXi2t+GKt8B8SbQh2Y+5yU11EZVvQXiCSPxbAO+7WS+77+M864C8Sb0/X1pZlOd3fskiCcdP5naPx2d/qaNrn4NxBNG5Jk1ffpfp4vl0oNlxN8fPy1G5R4QbwID1MxRV1wbb2dqXgbxhEm4meW92tRZM+75tLT4efA9n3PxQ3DeF8TfGz/pSJdPNLqbuJp1IJ4wUYFaPyJP/VqXsJ8E8Sbwuyv9JpqbeCnMvC+Ifwh43hffdpLv+AHxWYBvO8Hxszrt/gjEm8BVe/wDVtbu5KPvD+IfEZVjhF4lcgY/8QLiiY9+KAo/8YIb35Wy8zCIN4FRLvkuL2mhFuTbBeIJI/FMwwCKHlsSp8+BeBO46dZfxPETzOLKJ4gvANcSU/uHh4c9IJ4gy5L2r9kK96bm5ubYg/ZjQVV+cCTUPz0e7+YJJE0gDTK+8D1LRU826959KRf7eFjJSIfGtfAsT9pP6DbaNUzPfgb9eAI44+pkqyPw9HVneieMXAmAXxOzRuE/TLrZpf2pcE7PaYH4LAmIqKvZtejZKzYpL0+lQ6/mIXhEbShQXfPGKIoOheVI/hplUPtPjLQ699mkefbHBCY4KkeH8n0MqPH/Qp3iPJ1ycwdGUGyiUMcA8ffgktTra3yP7e5F4QtIUQp6LIiauwSNyr0Jnq3vTYeJPFli+RrvlbShWZ4JDlIzZEe8VhXOJbVIB131NpZuyqUGK0pvSHFfyk4m0KOb94ZYS4nHjafAcEvHHPLurtWvmxqzlhDPS9q1lruNp6jJk3hb59VTqpllKvvGtSHl+CJeyR4ZUGZCxVSushXviqs3Em62bsyRQkgpvvKVXdTgl5A2qsJBLL2Yy1lWNb4+EysJgT1yWRFDxV7WshDvFfX+WYFuGy/SWCnLqGnWPe9h6SUXiaUqHE9MBB3+jmE6drgUy19yUeMR9SF/dfX2EIpeCqciJXumlkSNn5+Y6LD5X4gJdDAkRy+VfO+rFAq5OG07v8QuNPQokbJ5E19ui7MYqKCLSGWG+mNtNv/W27yx9WZaHC+r8UaxFgwLl3hmRZ8SOV+OI+uiE+8TjV/wyVSuwotOPL5k2876X4oK1CZkAYpC/CrZ9encfKcaOYcsgqn9+ApRu3RHYJqucQlkNUyp8aysiWt17z4sHVmUnGq8QVPMo/7miYTt9A0X2j6EZpGVyS1qDENHWS6MI0jaFZFnGm+4FAQQippW5NuJpYNuQuJr4+xZ3CfvR9EToJqAeDwxsYLzNU261VdBcQHE43U8Fm5AOr61GU9MlMMVxOKt8RnR838GJKqrlfNvGWFin4DWAvdq8CKLfMoIrahasrcPhX8MpyNgNEtyWqW+u7t78YYNG26BRsLiARAP4oHs+FuAAQBYo0roeChr8wAAAABJRU5ErkJggg==");
+  background-image: url("//img.hicdn.cn/fed/images/20181224/f66730b048a4fb80e4b83b9fcd169f4c.png");
  }
 }
 .mt-range-progress {
@@ -701,9 +728,12 @@ $l50: 50%;
   background: transparent;
   border: none;
   margin-top: 10px;
-  right: 10%;
+  right: 8%;
   top: 0;
   padding: 0;
+  background-image: url("//img.hicdn.cn/fed/images/20181224/4737fcc5feb41f7ece8934738a18f1d4.jpg");
+  background-size: cover;
+  border-radius: 50%;
  }
 }
 </style>
