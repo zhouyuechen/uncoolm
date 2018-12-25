@@ -121,7 +121,8 @@ export default {
    lrc: "",
    lrcObj: null,
    height: "auto",
-   list:[]
+   list:[],
+   timeset:0
   };
  },
  methods: {
@@ -147,7 +148,7 @@ export default {
   },
   showSong() {
    this.popupVisible = true;
-   this.playmusic(66);
+   this.playmusic("openmv");
    this.p.currentTime = this.timeNow;
    this.p.play();
   },
@@ -170,7 +171,6 @@ export default {
     this.$http.get(url).then(result => {
      this.search_res = result.body.result.songs;
      this.showSearch();
-     console.log(this.search_res);
     });
    }
   },
@@ -214,15 +214,30 @@ export default {
    const self = this;
    self.timeDuration = parseInt(self.p1.duration);
   },
-
+  delayclick(){
+    
+     return ()=>{
+        let now=new Date();
+        now=now.getTime();
+        if(now-this.timeset<100){
+          this.timeset=now;
+          return
+        }
+        this.timeset=now;
+        if (this.$refs.player.paused) {
+        this.$refs.player.play();
+        this.play_img = "btn bg_s";
+       } else {
+        this.$refs.player.pause();
+        this.play_img = "btn bg_p";
+       }
+     }
+  },
   playmusic1() {
-   if (this.$refs.player.paused) {
-    this.$refs.player.play();
-    this.play_img = "btn bg_s";
-   } else {
-    this.$refs.player.pause();
-    this.play_img = "btn bg_p";
-   }
+    let play= this.delayclick();
+    
+    play();
+  
   },
   playmusic(val) {
    if (val == "openmv") {
@@ -249,7 +264,7 @@ export default {
    this.mid++;
    var newmid = this.mid;
    this.getsong(newmid);
-   this.playmusic(77);
+   this.playmusic("closemv");
   },
   changeM(e) {
    e.targetTouches[0].clientX;
@@ -291,7 +306,6 @@ export default {
 
    this.$http.get(url2).then(result => {//获取音频url
     this.musicurl = result.body.data[0].url;
-   
     load.close();
     this.addEventListeners();
    });
@@ -302,7 +316,7 @@ export default {
      this.lrcObj = { 0: "这首歌没有歌词哦O(∩_∩)O" };
      return;
     }
-    this.lrc = result.body.lrc.lyric;
+    result.body.lrc? this.lrc= result.body.lrc.lyric:"";
     this.p = document.querySelector("#player");
     let _this = this;
     this.lrcObj = this.jx();
@@ -372,7 +386,7 @@ export default {
     /* setTimeout(()=>{this.playmusic();},300); */
     this.addEventListeners();
 
-    this.playmusic(77);
+    this.playmusic("closemv");
     load.close();
    });
    var url3 = `lyric?id=${this.mid}`;
@@ -400,7 +414,7 @@ export default {
   },
   backTop(e) {//点击top返回顶部
    var touch = e.touches[0];
-   console.log(Number(touch.pageX), Number(touch.pageY));
+   /*  console.log(Number(touch.pageX), Number(touch.pageY)); */
    var timer = setInterval(function() {
     this.isTop = false;
     //获取滚动条的滚动高度
@@ -428,7 +442,7 @@ export default {
   selected() {//导航条的选中高亮，监听selected变量
    if (this.selected == 0) {
     var bb = document.querySelector(".mint-navbar .mint-tab-item.is-selected");
-    console.log(bb);
+    //console.log(bb);
     return;
    }
    this.$router.push(`/${this.selected}`);
@@ -452,9 +466,9 @@ export default {
          this._lockLoad || this._load();
         }; */
         this.p1 = document.getElementById("au1");
-        setTimeout(()=>{
+        /* setTimeout(()=>{
         this.playmusic1();
-        },200)
+        },200) */
        
   
   
@@ -514,7 +528,7 @@ $l50: 50%;
    border-radius: 50%;
    display: block;
    margin: 1rem auto;
-   border: 0.5rem solid rgba($color: #666, $alpha: 0.7);
+   border: .8rem solid rgba($color: #666, $alpha: 0.5);
    animation: rotate360 30s linear infinite;
   }
   .c {

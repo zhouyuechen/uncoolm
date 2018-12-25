@@ -64,7 +64,7 @@ export default {
         }
         this.data = this.data.concat(this.res.slice(last , last + 5));
         this.loading = false;
-        console.log("执行");
+        //console.log("执行");
       }, 1000);
     },
     search_val(val) { /* 点击热搜修改搜索框的值 */
@@ -93,7 +93,7 @@ export default {
       handler: function() {
         this.data = this.res.slice(0, 5);
         this.loading = false;
-        console.log(this.data);
+        //console.log(this.data);
       }
     },
      kw: {

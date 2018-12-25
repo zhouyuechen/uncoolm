@@ -33,7 +33,7 @@
      <ul class="more" v-if="more[1]">
       <li v-for="(it,i) in more" :key="i">
        <img v-lazy="it.cover" alt="加载失败">
-       <p>{{it.name}}</p>
+       <p class="simititle">{{it.name}}</p>
        <p>播放次数:{{it.playCount}}</p>
       </li>
      </ul>
@@ -117,7 +117,7 @@ export default {
    var url2 = `mv/url?id=${mvid}`;
    this.$http.get(url2).then(result => {
     this.mvTrueUrl = result.body.data.url;
-    console.log(this.mvTrueUrl)
+    //console.log(this.mvTrueUrl)
    });
    var url3 = `simi/mv?mvid=${mvid}`;
    this.$http.get(url3).then(result => {
@@ -143,7 +143,7 @@ export default {
     this.data = this.data.concat(this.res.slice(last, last + 5));
 
     this.loading = false;
-    console.log("执行");
+    //console.log("执行");
    }, 1000);
   }
  },
@@ -219,6 +219,9 @@ $l50: 50%;
     p {
      text-align: left;
      padding-left: 0.3rem;
+    }
+    p.simititle{
+      height: 2rem;
     }
     list-style: none;
     width: 45%;

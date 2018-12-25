@@ -5,7 +5,7 @@
   v-infinite-scroll="loadMore"
   infinite-scroll-disabled="loading"
   infinite-scroll-distance="30" infinite-scroll-immediate-check="loading2" >
-  <li v-for="(item,i) in list" :key="i">
+  <li v-for="(item) in list" :key="item.id">
       <img v-lazy="item.song.album.picUrl" alt="加载失败"  @click="playthis(item.id)"  > 
       <div><p>{{item.name}}</p><p>{{item.song.artists[0].name}}</p></div>
       <p>发布时间<br>{{item.song.album.publishTime|dateFormat}}</p>
@@ -23,19 +23,26 @@
       return {
         list:[],
         loading:true,
-    mid:0,
-    loading2:true
+        mid:0,
+        loading2:true,
+        timeset:0
       }
     },
     methods:{
       playthis(mid){
+        let now=new Date();
+        now=now.getTime();
+        if(now-this.timeset<100){
+          this.timeset=now
+          return
+        }
+        this.timeset=now
         this.$emit("playThis", mid);
       },
       getsimi(){//获取推荐新歌
         
       var url = `personalized/newsong`;
       
-     
       this.$http.get(url).then(result => {
         
           this.list=result.body.result;
@@ -49,7 +56,6 @@
         },
      loadMore() {
       this.loading = true;
-      console.log("执行");
        setTimeout(() => {
            
         for (let i = 0; i < 5; i++) {

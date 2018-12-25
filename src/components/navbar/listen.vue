@@ -65,6 +65,9 @@ export default {
      
     this.getBanner();
     this.getback();
+    window.onresize=()=>{
+        this.getback();
+    }
    
   },
   components:{
