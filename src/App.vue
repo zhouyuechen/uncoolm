@@ -214,7 +214,7 @@ export default {
    const self = this;
    self.timeDuration = parseInt(self.p1.duration);
   },
-  delayclick(){
+  delayclick(){//设置点击间隔时间，小于100ms无视
     
      return ()=>{
         let now=new Date();
@@ -235,7 +235,6 @@ export default {
   },
   playmusic1() {
     let play= this.delayclick();
-    
     play();
   
   },

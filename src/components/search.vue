@@ -108,8 +108,8 @@ export default {
     setTimeout(() => {
       this.changeC();
     }, 400);
-  },
-  updated() {}
+  }
+  
 };
 </script>
 <style scoped lang="scss">
@@ -118,7 +118,7 @@ $topc: rgba(32, 179, 125, 1);
 $l20: 20%;
 $l100: 100%;
 $l50: 50%;
-_search{
+._search{
   -webkit-overflow-scrolling: touch;//适配ios系统的滑动功能
 }
 .hot {
