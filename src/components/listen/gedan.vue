@@ -46,10 +46,10 @@
           return;
         }
         this.song_listshow = this.song_listshow.concat(this.song_list.slice(last , last + 6));
-        console.log(this.song_listshow);
+        //console.log(this.song_listshow);
 
         this.loading = false;
-        console.log("执行");
+        //console.log("执行");
       }, 1000);
     },
     },
