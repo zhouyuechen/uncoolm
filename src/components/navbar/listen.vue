@@ -42,7 +42,7 @@ export default {
     };
   },
   methods: {
-    goup(mid){
+    goup(mid){/* 点击播放 */
         this.$emit("playThis", mid);
     },
     getBanner() {//获取banner
@@ -57,7 +57,7 @@ export default {
         var h =Math.floor(window.innerWidth*0.37);
        this.$refs.sw.$el.style.height=h+"px";
     },
-    clearS(){
+    clearS(){/* 让导航栏归0 */
         this.$emit("jump", 0);
     }
   },

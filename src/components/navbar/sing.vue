@@ -1,4 +1,5 @@
 <template>
+<!-- 一个纯展示页面，展示的是独家放送和推荐电台 -->
  <div class="sing">
  <h3>独家放送</h3>
  <ul class="unique_pro">

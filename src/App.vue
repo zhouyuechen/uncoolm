@@ -126,8 +126,8 @@ export default {
   };
  },
  methods: {
-  jx() {
-   /* 解析歌词的函数 */
+  jx() {/* 解析歌词的函数 ，将lrc歌词解析成一个对象，键为时间，值为对应歌词*/
+   
    var lyrics = this.lrc.split("\n");
    var lrcObj = {};
    for (var i = 0; i < lyrics.length; i++) {
@@ -146,13 +146,13 @@ export default {
    }
    return lrcObj;
   },
-  showSong() {
+  showSong() {/* 点击左下角图片可以弹出播放详情页 */
    this.popupVisible = true;
    this.playmusic("openmv");
    this.p.currentTime = this.timeNow;
    this.p.play();
   },
-  back() {
+  back() {/* 从播放详情页返回 */
    this.popupVisible = false;
    this.playmusic();
    this.timeNow = this.p.currentTime;
@@ -174,31 +174,29 @@ export default {
     });
    }
   },
-  showSearch() {
+  showSearch() {/* 跳转到搜索页 */
    this.$router.push(`/search/搜索`);
    this.changeS();
   },
-  show() {
+  show() {/* 右上角的三个点 */
    Toast({
     message: "这里是不酷猫，更多精彩敬请期待"
     /* iconClass: 'icon icon-success' */
    });
   },
-  goto(path) {
-   this.$router.push(`/${path}`);
-  },
-  addEventListeners: function() {
+  
+  addEventListeners: function() {/* 绑定事件 */
    const self = this;
 
    self.p1.addEventListener("timeupdate", self._currentTime);
    self.p1.addEventListener("canplay", self._durationTime);
   },
-  removeEventListeners: function() {
+  removeEventListeners: function() {/* 移除事件 */
    const self = this;
    self.p1.removeEventListener("timeupdate", self._currentTime);
    self.p1.removeEventListener("canplay", self._durationTime);
   },
-  _currentTime: function() {
+  _currentTime: function() {/* 获取当前播放的时间 */
    setTimeout(() => {
     const self = this;
     self.timeNow = parseInt(self.p1.currentTime);
@@ -238,7 +236,7 @@ export default {
     play();
   
   },
-  playmusic(val) {
+  playmusic(val) {/* 播放与暂停 */
    if (val == "openmv") {
     if (this.$refs.player.paused) {
      return;
@@ -259,22 +257,19 @@ export default {
     }
    }
   },
-  nextmusic() {
+  nextmusic() {/* 按钮：下一首 */
    this.mid++;
    var newmid = this.mid;
    this.getsong(newmid);
    this.playmusic("closemv");
   },
-  changeM(e) {
-   e.targetTouches[0].clientX;
-  },
-  change_search_val(val) {
+  change_search_val(val) { /* 传入search的修改关键词的方法 */
    this.search_value = val;
    if (this.search_value !== "" && this.search_value != "搜索") {
     this.letsSearch();
    }
   },
-  changeS() {
+  changeS() {/* 跳转到搜索页的方法 */
    this.selected = 0;
   },
   last() {//返回上一页
@@ -331,12 +326,7 @@ export default {
     };
    });
   },
-  check(mid) {
-   var url = `song/detail?ids=${this.mid}`;
-   this.$http.get(url).then(result => {
-    return result.success;
-   });
-  },
+  
    getnewsong(){//获取推荐新歌
         
       var url = `personalized/newsong`;
@@ -448,29 +438,11 @@ export default {
   },
   isPlay() {}
  },
- created(){
-   this.getnewsong();
-   
- },
+ 
  mounted() {//挂载完后执行一次获取随机音乐，
   this.getnewsong();
-  /*  HTMLAudioElement.prototype._play = HTMLAudioElement.prototype.play;
-        HTMLAudioElement.prototype._load = HTMLAudioElement.prototype.load;
-        HTMLAudioElement.prototype.play = function() {
-         // 禁止load操作
-         this._lockLoad = true;
-         this._play();
-        };
-        HTMLAudioElement.prototype.load = function() {
-         this._lockLoad || this._load();
-        }; */
-        this.p1 = document.getElementById("au1");
-        /* setTimeout(()=>{
-        this.playmusic1();
-        },200) */
-       
-  
-  
+  this.p1 = document.getElementById("au1");
+   
  },
  beforeDestroyed() {//销毁前解除绑定
   this.removeEventListeners();

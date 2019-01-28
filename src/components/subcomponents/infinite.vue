@@ -29,7 +29,7 @@
       }
     },
     methods:{
-      playthis(mid){
+      playthis(mid){/* 点击歌曲播放，调用App.js中的播放方法 */
         let now=new Date();
         now=now.getTime();
         if(now-this.timeset<100){
@@ -54,7 +54,7 @@
       }); 
 
         },
-     loadMore() {
+     loadMore() { /* 加载更多 */
       this.loading = true;
        setTimeout(() => {
            

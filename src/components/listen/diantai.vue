@@ -1,4 +1,5 @@
 <template>
+<!-- 热门电台，纯展示 -->
  <div class="diantai">
  <h3>电台分类</h3><hr>
   <ul class="hot" >
@@ -39,7 +40,7 @@
         this.$refs.hots[e].style.backgroundColor = `rgba(${r},${g},${b},0.9 )`;
       }
     },
-    getDj(did){
+    getDj(did){/* 根据电台类型id搜索 */
         var str = `dj/recommend/type?type=${did}`;
     this.$http.get(str).then(result => {
       this.djs = result.body.djRadios.slice(0,10);
@@ -55,7 +56,7 @@
     mounted(){
       setTimeout(() => {
       this.changeC();
-    }, 500);
+    }, 200);
     }
   }
 </script>

@@ -1,4 +1,5 @@
 <template>
+ <!-- 分为三栏推荐，排行，分类 -->
  <div class="yueku">
 
   <div class="nav">
@@ -49,21 +50,20 @@
        'infinite-box':infinite   //注册子组件
      },
     methods:{
-      goup(mid){
+      goup(mid){/* 点击播放的方法 */
         this.$emit("playThis", mid);
     },
-       playthis(mid){
+       playthis(mid){/* 设置当前mid */
       this.mid=mid;
-    
         this.$emit("playThis", this.mid);
       },
-      goSearch(kw){
+      goSearch(kw){/* 按关键词搜索 */
         this.kw=kw;
         this.$router.push(`/search/${this.kw}`);
       }
       ,
-    loadMore() {
-      /* 加载更多 */
+    loadMore() { /* 加载更多 */
+     
       this.loading = true;
       Toast({
         message: "加载中...",
@@ -81,8 +81,6 @@
           return;
         }
         this.rank_show = this.rank_show.concat(this.rank.slice(last , last + 10));
-       
-
         this.loading = false;
         console.log("执行");
       }, 1000);
@@ -92,36 +90,36 @@
       active: {
       /* 监听父组件传来的res */
       immediate: true,
-      handler: function() {
+      handler: function() {/* 底部边框移动效果 */
         switch(this.active)
         {
-   case "t1":
-   this.loading=true;
-    setTimeout(() => {
-     
-   this.$refs.bor.style.left="0"
-    }, 100); 
-  break;
-   case "t2":
-  setTimeout(() => {
-      this.loading=false;
-   this.$refs.bor.style.left="33.3%"
-    }, 100); 
-  break;
-   case "t3":
-   this.loading=true;
-  setTimeout(() => {
-     
-   this.$refs.bor.style.left="66.6%"
-    }, 100); 
-   break;
-    default:
-  break;
-   }
-      }
-    }
-    },
-    created(){
+          case "t1":
+          this.loading=true;
+            setTimeout(() => {
+            
+          this.$refs.bor.style.left="0"
+            }, 100); 
+          break;
+          case "t2":
+          setTimeout(() => {
+              this.loading=false;
+          this.$refs.bor.style.left="33.3%"
+            }, 100); 
+          break;
+          case "t3":
+          this.loading=true;
+          setTimeout(() => {
+            
+          this.$refs.bor.style.left="66.6%"
+            }, 100); 
+          break;
+            default:
+          break;
+          }
+              }
+            }
+         },
+    created(){/* 发请求获取数据 */
       var url1=`top/list?idx=1`;
       this.$http.get(url1).then(result => {
         this.rank = result.body.playlist.tracks.slice(0,100);

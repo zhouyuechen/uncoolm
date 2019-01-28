@@ -1,4 +1,5 @@
 <template>
+<!-- 歌手页 -->
  <div class="geshou">
  <h3>歌手分类</h3><hr>
   <ul class="hot" >
@@ -43,7 +44,7 @@
       }
     },
     methods:{
-     getPeople(code){
+     getPeople(code){/* 按照歌手类型code搜索歌手 */
         
            var url=`artist/list?cat=${code}&offset=0&limit=50`;
        this.$http.get(url).then(result => {
@@ -53,8 +54,8 @@
      
      
      },
-      changeC() {
-      /* 随机背景颜色 */
+      changeC() {/* 随机背景颜色 */
+      
       for (var e = 0; e < this.$refs.hots.length; e++) {
         var r = Math.floor(Math.random() * 255);
         var g = Math.floor(Math.random() * 255);
@@ -62,14 +63,12 @@
         this.$refs.hots[e].style.backgroundColor = `rgba(${r},${g},${b},0.9 )`;
       }
      },
-     getDetails(val){
+     getDetails(val){/* 点击歌手名字直接在搜索页搜索 */
            this.$emit("search_val", val);
      }
     
     },
-    created(){
-      
-    },
+    
     mounted(){
       setTimeout(() => {
       this.changeC();

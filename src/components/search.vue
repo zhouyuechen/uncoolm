@@ -1,3 +1,4 @@
+
 <template>
  <div class="_search">
   <ul class="hot" >
@@ -40,12 +41,12 @@ export default {
     }
   },
   methods: {
-    playthis(mid){
+    playthis(mid){/* 按照音乐的id播放音乐，调用的是从App.js里传来的方法 */
       this.mid=mid;
         this.$emit("playThis", this.mid);
       },
-    loadMore() {
-      /* 加载更多 */
+    loadMore() {/* 下拉加载更多，页面底部与视口底部差距小于10px时触发 */
+      
       this.loading = true;
       Toast({
         message: "加载中...",
@@ -70,8 +71,8 @@ export default {
     search_val(val) { /* 点击热搜修改搜索框的值 */
       this.$emit("search_val", val);
     },
-    changeC() {
-      /* 随机背景颜色 */
+    changeC() { /*热搜词 随机背景颜色 */
+     
       for (var e = 0; e < this.$refs.hots.length; e++) {
         var r = Math.floor(Math.random() * 255);
         var g = Math.floor(Math.random() * 255);
@@ -80,7 +81,7 @@ export default {
       }
     }
   },
-  created() {
+  created() {/* 页面创建时发送请求，获取搜索结果 */
     var str = `search/hot`;
     this.$http.get(str).then(result => {
       this.hot = result.body.result.hots;
@@ -88,7 +89,7 @@ export default {
   },
   watch: {
     res: {
-      /* 监听父组件传来的res */
+      /* 监听父组件传来的res变量 */
       immediate: true,
       handler: function() {
         this.data = this.res.slice(0, 5);

@@ -97,17 +97,17 @@ export default {
   };
  },
  methods: {
-  back() {
+  back() {/* 从mv详情页返回 */
    this.popupVisible = false;
    if (this.$refs.video.paused != true) {
     this.$refs.video.pause();
    }
    this.$emit("stop","closemv");
   },
-  handleTouchmove(e) {
+  handleTouchmove(e) {/* 取消原页面的触摸事件 */
    e.preventDefault();
   },
-  playVideo(mvid) {
+  playVideo(mvid) {/* 点击图片播放对应的mv */
    this.$emit("stop","openmv");//停止歌曲播放
    this.popupVisible = true;
    var url = `mv/detail?mvid=${mvid}`;
@@ -124,8 +124,8 @@ export default {
     this.more = result.body.mvs.slice(0, 4);
    });
   },
-  loadMore() {
-   /* 加载更多 */
+  loadMore() {/* 加载更多 */
+   
    this.loading = true;
    Toast({
     message: "加载中...",
@@ -147,7 +147,7 @@ export default {
    }, 1000);
   }
  },
- created() {
+ created() {/* 页面创建时，获取20个最新的mv */
   var url = `mv/first?limit=20`;
   this.$http.get(url).then(result => {
    this.res = result.body.data;
