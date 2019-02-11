@@ -64,14 +64,17 @@
     class="mint-popup"
     :modal="false"
    >
-    <div class="back">
+    <div class="back"><!--  -->
      <mt-button @touchend.native="back" size="large" type="primary">返回</mt-button>
      <p v-text="songname"></p>
     </div>
     <p v-if="lrc" v-text="arname"></p>
     <img :src="picurl" alt="加载失败" class="re">
-    <div v-if="lrc" class="c">
-     <div class="tc font30 mb15">{{g}}</div>
+    <p v-if="!lrc">歌词加载中或缺少歌词</p>
+    <div v-if="lrc" class="lrcBox" id="lrcBox">
+       <p v-for="(item,i) in lrcObj" :key="i" class="" :data-sentenceId="i" >
+          {{item}}
+       </p>
     </div>
     <audio class="songD" id="player" ref="player2" :src="musicurl" auto controls></audio>
 
@@ -127,7 +130,6 @@ export default {
  },
  methods: {
   jx() {/* 解析歌词的函数 ，将lrc歌词解析成一个对象，键为时间，值为对应歌词*/
-   
    var lyrics = this.lrc.split("\n");
    var lrcObj = {};
    for (var i = 0; i < lyrics.length; i++) {
@@ -136,12 +138,16 @@ export default {
     var timeRegExpArr = lyric.match(timeReg);
     if (!timeRegExpArr) continue;
     var clause = lyric.replace(timeReg, "");
-    for (var k = 0, h = timeRegExpArr.length; k < h; k++) {
+    for (let k = 0, h = timeRegExpArr.length; k < h; k++) {
      var t = timeRegExpArr[k];
      var min = Number(String(t.match(/\[\d*/i)).slice(1)),
       sec = Number(String(t.match(/\:\d*/i)).slice(1));
      var time = min * 60 + sec;
-     lrcObj[time] = clause;
+     if(clause){
+       lrcObj[time] =clause
+     }
+     
+     
     }
    }
    return lrcObj;
@@ -314,11 +320,26 @@ export default {
     this.p = document.querySelector("#player");
     let _this = this;
     this.lrcObj = this.jx();
-    this.p.addEventListener("timeupdate", function() {//绑定歌词滚动事件
+    this.p.addEventListener("timeupdate", function() {
+      //绑定歌词滚动事件
+      setTimeout(()=>{
+         let allSentences= Array.prototype.slice.call(document.querySelectorAll("#lrcBox p"));  
      let obj = _this.lrcObj[Math.floor(this.currentTime)];
      if (obj != undefined) {
-      _this.g = obj;
+        allSentences.map( (item,i)=>{
+          item.classList.remove ("now")
+          if(item.getAttribute("data-sentenceId")==Math.floor(this.currentTime)){
+            //console.log(item.getAttribute("data-sentenceId"),obj);
+            item.classList.add("now");
+            if(i-4>0){
+            allSentences[0].style.marginTop=-31*(i-4)+"px"
+          }
+          }
+          
+        } )
      }
+      },100)
+    
     });
     this.height = window.innerHeight + "px";
     window.onresize = () => {
@@ -390,9 +411,15 @@ export default {
     let _this = this;
     this.lrcObj = this.jx();
     this.p.addEventListener("timeupdate", function() {
+     let allSentences= Array.prototype.slice.call(document.querySelectorAll("#lrcBox p"));
      let obj = _this.lrcObj[Math.floor(this.currentTime)];
      if (obj != undefined) {
-      _this.g = obj;
+        allSentences.map( (item,i)=>{
+          if(i==obj.index){
+            console.log(obj)
+            //item.classList.addClass("now")
+          }
+        } )
      }
     });
     this.height = window.innerHeight + "px";
@@ -502,11 +529,21 @@ $l50: 50%;
    border: .8rem solid rgba($color: #666, $alpha: 0.5);
    animation: rotate360 30s linear infinite;
   }
-  .c {
+  .lrcBox {
    color: $topc;
    font-size: 1.3rem;
    margin: 2rem auto;
    display: block;
+   height: 250px;
+   overflow: hidden;
+    p{
+      font-size: 16px;
+      color: $topc;
+      transition: all .3s;
+    }
+    p.now{
+      font-size: 20px
+    }
   }
   .songD {
    width: 100%;
