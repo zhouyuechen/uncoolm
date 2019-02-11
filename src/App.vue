@@ -330,10 +330,10 @@ export default {
           item.classList.remove ("now")
           if(item.getAttribute("data-sentenceId")==Math.floor(this.currentTime)){
             //console.log(item.getAttribute("data-sentenceId"),obj);
-            item.classList.add("now");
             if(i-4>0){
-            allSentences[0].style.marginTop=-31*(i-4)+"px"
-          }
+            allSentences[0].style.marginTop=-31*(i-4)+"px";
+           }
+          item.classList.add("now");
           }
           
         } )
@@ -537,6 +537,9 @@ $l50: 50%;
    height: 250px;
    overflow: hidden;
     p{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 16px;
       color: $topc;
       transition: all .3s;
