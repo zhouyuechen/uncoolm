@@ -24,8 +24,7 @@
       <button @touchend="letsSearch"></button>
     </div>
     <!-- 组件显示区 -->
-    <router-view
-      v-on:jump="changeS"
+    <router-view v-on:jump="changeS"
       v-on:search_val="change_search_val"
       v-on:playThis="getsong2"
       v-on:stop="playmusic"
@@ -221,8 +220,7 @@
       },
       delayclick() {//设置点击间隔时间，小于100ms无视
 
-        return () => {
-          let now = new Date();
+        return () => { let now = new Date();
           now = now.getTime();
           if (now - this.timeset < 100) {
             this.timeset = now;
