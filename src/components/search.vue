@@ -74,7 +74,6 @@
         this.$emit("search_val", val);
       },
       changeC() { /*热搜词 随机背景颜色 */
-
         for (var e = 0; e < this.$refs.hots.length; e++) {
           var r = Math.floor(Math.random() * 255);
           var g = Math.floor(Math.random() * 255);
