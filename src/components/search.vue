@@ -1,7 +1,8 @@
 <template>
   <div class="_search">
+    <p class="search_title">热门搜索</p>
     <ul class="hot">
-      <p>热门搜索</p>
+
       <li v-text="item.first" v-for="(item,i) in hot" :key="i" ref="hots"
           @touchend="search_val(item.first)"
       ></li>
@@ -123,7 +124,15 @@
   ._search {
     -webkit-overflow-scrolling: touch; //适配ios系统的滑动功能
   }
-
+  p.search_title {
+    width: 100%;
+    text-align: left;
+    border-bottom: 2px dashed #666;
+    font-size: 1.1rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    margin-top: 10px;
+  }
   .hot {
     display: flex;
     justify-content: space-around;
@@ -131,14 +140,7 @@
     padding: 0;
     flex-wrap: wrap;
 
-    p {
-      width: 100%;
-      text-align: left;
-      border-bottom: 2px dashed #666;
-      font-size: 1.1rem;
-      padding-bottom: 0.5rem;
-      padding-left: 0.5rem;
-    }
+
 
     li {
       list-style: none;

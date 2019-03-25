@@ -25,11 +25,11 @@
     </div>
     <!-- 组件显示区 -->
     <router-view v-on:jump="changeS"
-      v-on:search_val="change_search_val"
-      v-on:playThis="getsong2"
-      v-on:stop="playmusic"
-      :res="search_res"
-      style="margin-bottom:4rem"
+                 v-on:search_val="change_search_val"
+                 v-on:playThis="getsong2"
+                 v-on:stop="playmusic"
+                 :res="search_res"
+                 style="margin-bottom:4rem"
     />
     <!-- 返回顶部按钮 -->
     <button :class="back_btn" @touchstart="backTop">TOP</button>
@@ -89,6 +89,7 @@
   import {Navbar, TabItem, Toast} from "mint-ui";
   import listen from "./components/navbar/listen";
   import search from "./components/search";
+  import  {mapState,mapGetters,mapActions,mapMutations} from  'vuex'
   /* import func from './vue-temp/vue-editor-bridge'; */
   export default {
     name: "App",
@@ -220,7 +221,8 @@
       },
       delayclick() {//设置点击间隔时间，小于100ms无视
 
-        return () => { let now = new Date();
+        return () => {
+          let now = new Date();
           now = now.getTime();
           if (now - this.timeset < 100) {
             this.timeset = now;
@@ -461,13 +463,18 @@
       isPlay() {
       }
     },
-
+    computed:{
+      ...mapGetters( {
+        mans: 'man/allMember'
+      })
+    },
     mounted() {//挂载完后执行一次获取随机音乐，
       this.getnewsong();
       this.p1 = document.getElementById("au1");
-
+      console.log(this.mans)
     },
-    beforeDestroyed() {//销毁前解除绑定
+
+    beforeDestroy() {//销毁前解除绑定
       this.removeEventListeners();
     }
   };

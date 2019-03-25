@@ -6,6 +6,7 @@ import router from './router'
 import Mint from "mint-ui";
 import axios from 'axios';
 import vueAxios from 'vue-axios'; //得npm i vue-axios
+import store from './store'//引入store
 
 Vue.use(Mint);
 
@@ -14,7 +15,7 @@ import "./lib/mui/css/mui.css"
 import "./lib/mui/css/icons-extra.css"
 import VueResource from "vue-resource"
 //4:加载(注册)VueResource
-Vue.use(VueResource)
+Vue.use(VueResource);
 Vue.http.options.root = "http://120.79.240.144:3000/";
 //7:设置全局ajax post 访问格式
 Vue.http.options.emulateJSON = true;
@@ -37,5 +38,6 @@ new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  store
 })
