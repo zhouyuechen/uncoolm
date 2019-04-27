@@ -5,6 +5,7 @@
 
       <li v-text="item.first" v-for="(item,i) in hot" :key="i" ref="hots"
           @touchend="search_val(item.first)"
+          v-bind:style="styleObject"
       ></li>
 
     </ul>
@@ -30,7 +31,10 @@
         hot: [],
         data: [],
         loading: true,
-        mid: 0
+        mid: 0,
+        styleObject: {
+          backgroundColor: this.changeC(),
+        }
       };
     },
     props: {
@@ -75,16 +79,16 @@
         this.$emit("search_val", val);
       },
       changeC() { /*热搜词 随机背景颜色 */
-        for (var e = 0; e < this.$refs.hots.length; e++) {
-          var r = Math.floor(Math.random() * 255);
-          var g = Math.floor(Math.random() * 255);
-          var b = Math.floor(Math.random() * 255);
-          this.$refs.hots[e].style.backgroundColor = `rgba(${r},${g},${b},0.9 )`;
-        }
+
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        return `rgba(${r},${g},${b},0.5 )`;
+
       }
     },
     created() {/* 页面创建时发送请求，获取搜索结果 */
-      var str = `search/hot`;
+      const str = `search/hot`;
       this.$http.get(str).then(result => {
         this.hot = result.body.result.hots;
       });
@@ -108,9 +112,7 @@
       }
     },
     mounted() {
-      setTimeout(() => {
-        this.changeC();
-      }, 400);
+
     }
 
   };
@@ -124,6 +126,7 @@
   ._search {
     -webkit-overflow-scrolling: touch; //适配ios系统的滑动功能
   }
+
   p.search_title {
     width: 100%;
     text-align: left;
@@ -133,13 +136,13 @@
     padding-left: 0.5rem;
     margin-top: 10px;
   }
+
   .hot {
     display: flex;
     justify-content: space-around;
     width: 100%;
     padding: 0;
     flex-wrap: wrap;
-
 
 
     li {

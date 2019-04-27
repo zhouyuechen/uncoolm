@@ -464,14 +464,11 @@
       }
     },
     computed:{
-      ...mapGetters( {
-        mans: 'man/allMember'
-      })
+
     },
     mounted() {//挂载完后执行一次获取随机音乐，
       this.getnewsong();
       this.p1 = document.getElementById("au1");
-      console.log(this.mans)
     },
 
     beforeDestroy() {//销毁前解除绑定
