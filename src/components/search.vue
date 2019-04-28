@@ -87,7 +87,7 @@
 
       }
     },
-    created() {/* 页面创建时发送请求，获取搜索结果 */
+    created() {/* 页面创建时发送请求，获取搜索热搜词 */
       const str = `search/hot`;
       this.$http.get(str).then(result => {
         this.hot = result.body.result.hots;

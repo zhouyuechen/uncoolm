@@ -132,8 +132,8 @@
     },
     methods: {
       jx() {/* 解析歌词的函数 ，将lrc歌词解析成一个对象，键为时间，值为对应歌词*/
-        var lyrics = this.lrc.split("\n");
-        var lrcObj = {};
+        let lyrics = this.lrc.split("\n");
+        let lrcObj = {};
         for (var i = 0; i < lyrics.length; i++) {
           var lyric = decodeURIComponent(lyrics[i]);
           var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
@@ -148,8 +148,6 @@
             if (clause) {
               lrcObj[time] = clause
             }
-
-
           }
         }
         return lrcObj;
@@ -175,7 +173,7 @@
           this.showSearch();
           return null;
         } else {
-          var url = `search?keywords=${this.search_value}`;
+          let url = `search?keywords=${this.search_value}`;
           this.$http.get(url).then(result => {
             this.search_res = result.body.result.songs;
             this.showSearch();
@@ -337,7 +335,6 @@
                     }
                     item.classList.add("now");
                   }
-
                 })
               }
             }, 100)

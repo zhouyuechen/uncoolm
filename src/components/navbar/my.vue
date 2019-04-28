@@ -4,7 +4,7 @@
     <div v-if="!check" class="my">
       <input type="text"
              @blur="checkVal(userData.account,'请输入手机号')"
-             placeholder="请输入手机号或网易邮箱"
+             placeholder="请输入手机号"
              v-model="userData.account"/>
 
       <input type="password"

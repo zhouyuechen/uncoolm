@@ -34,9 +34,8 @@ const getters = {   //实时监听state值的变化(最新状态)
   },
 };
 const mutations = {
-  login(state, data) {   //自定义改变state初始值的方法，这里面的参数除了state之外还可以再传额外的参数(变量或对象);
+  login(state, data) {   //登录
     let str = `login/cellphone?phone=${data.account}&password=${data.pwd}`
-
     data.http.get(str).then((result) => {
       console.log(result)
       const {nickname, avatarUrl, province, city} = result.body.profile
