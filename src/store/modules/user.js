@@ -21,7 +21,8 @@ const state = {   //要设置的全局访问的state对象
     37: '山东省', 71: '台湾省',
     41: '河南省', 81: '香港特别行政区',
     42: '湖北省', 82: '澳门特别行政区'
-  }
+  },
+  favList:[]
 
 };
 const getters = {   //实时监听state值的变化(最新状态)
@@ -31,6 +32,9 @@ const getters = {   //实时监听state值的变化(最新状态)
   },
   now(state) {
     return state.userNow
+  },
+  fav(state) {
+    return state.favList
   },
 };
 const mutations = {
@@ -47,9 +51,18 @@ const mutations = {
         city
       };
       state.is = true;
+
       data.toast({
         message:"登录成功"
       })
+        // const t=new Date()
+        // data.http.get(`likelist?uid=${result.body.account.id}&timestamp=${t.getTime()}`).then((res)=>{
+        //
+        //     return  data.$http.get(`song/url?id=${res.ids.join(',')}`)
+        // }).then((jieguo)=>{
+        //   state.favList=jieguo.data;
+        //   console.log(jieguo.data)
+        // })
 
     },(err)=>{
       console.log(err)

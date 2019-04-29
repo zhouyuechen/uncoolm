@@ -65,7 +65,6 @@
         if(!this.userData.account||!this.userData.pwd){
           Toast({
             message: "密码或账号没输入"
-            /* iconClass: 'icon icon-success' */
           });
           return
         }
