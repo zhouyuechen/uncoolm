@@ -42,9 +42,9 @@ const mutations = {
     let str = `login/cellphone?phone=${data.account}&password=${data.pwd}`
     data.http.get(str).then((result) => {
       console.log(result)
-      const {nickname, avatarUrl, province, city} = result.body.profile
+      const {nickname, avatarUrl, province, city} = result.data.profile
       state.userNow = {
-        id: result.body.account.id,
+        id: result.data.account.id,
         nickname,
         avatarUrl,
         province:state.provinceList[province.toString().slice(0,2)],
@@ -55,14 +55,7 @@ const mutations = {
       data.toast({
         message:"登录成功"
       })
-        // const t=new Date()
-        // data.http.get(`likelist?uid=${result.body.account.id}&timestamp=${t.getTime()}`).then((res)=>{
-        //
-        //     return  data.$http.get(`song/url?id=${res.ids.join(',')}`)
-        // }).then((jieguo)=>{
-        //   state.favList=jieguo.data;
-        //   console.log(jieguo.data)
-        // })
+
 
     },(err)=>{
       console.log(err)
@@ -80,6 +73,13 @@ const mutations = {
       })
     })
   },
+  setFav(state, data) {   //设置喜欢列表
+    state.favList=data.likeList
+  },
+  addFav(state, data) {   //添加列表中的项
+    state.favList.push(data.mid)
+    console.log(state.favList.length)
+  },
 
 };
 const actions = {
@@ -89,7 +89,12 @@ const actions = {
   getLogout(context, data) {   //同上注释，num为要变化的形参
     context.commit('logout', data)
   },
-
+  getSetFav(context, data) {   //同上注释，num为要变化的形参
+    context.commit('setFav', data)
+  },
+  getAddFav(context, data) {   //同上注释，num为要变化的形参
+    context.commit('addFav', data)
+  },
 };
 
 export default {

@@ -65,7 +65,10 @@
       >
         <div class="back"><!--  -->
           <mt-button @touchend.native="back" size="large" type="primary">返回</mt-button>
-          <p v-text="songname"></p>
+          <p  v-text="songname"></p>
+          <div @click="likeThis()">收藏</div>
+          <span v-bind:class="{ show: showToast}"  class="toast" v-text="toastTxt">
+          </span>
         </div>
         <p v-if="lrc" v-text="arname"></p>
         <img :src="picurl" alt="加载失败" class="re">
@@ -89,12 +92,20 @@
   import {Navbar, TabItem, Toast} from "mint-ui";
   import listen from "./components/navbar/listen";
   import search from "./components/search";
-  import  {mapState,mapGetters,mapActions,mapMutations} from  'vuex'
-  /* import func from './vue-temp/vue-editor-bridge'; */
+  import  {mapGetters,mapActions} from  'vuex'
+  import axios from 'axios'
+  const instance = axios.create({
+    baseURL: 'http://120.79.240.144:3000',
+    // baseURL: 'http://127.0.0.1:3000',
+    timeout: 5000,
+    withCredentials: true,
+  });
   export default {
     name: "App",
     data() {
       return {
+        showToast:true,
+        toastTxt:"",
         play_img: "btn bg_s",
         selected: "listen",
         prec: 0,
@@ -130,7 +141,41 @@
         timeset: 0
       };
     },
+
     methods: {
+      ...mapActions('user', ['getAddFav']),
+
+      async likeThis(){
+
+        if(!this.check){
+          this.toastTxt="先登录才能收藏";
+          this.showToast=false;
+          setTimeout(()=>{
+            this.showToast=true;
+          },3000)
+        }else if(this.fav.indexOf(this.mid)!==-1){
+          this.toastTxt="您已收藏过该歌曲";
+          this.showToast=false;
+          setTimeout(()=>{
+            this.showToast=true;
+          },3000)
+        }else {
+          const res = await instance.get(`like?id=${this.mid}`);
+          console.log(res)
+          if(res.status===200){
+            this.getAddFav({
+              mid:this.mid
+            })
+            this.toastTxt="收藏成功";
+            this.showToast=false;
+            setTimeout(()=>{
+              this.showToast=true;
+            },3000)
+          }
+        }
+
+
+      },
       jx() {/* 解析歌词的函数 ，将lrc歌词解析成一个对象，键为时间，值为对应歌词*/
         let lyrics = this.lrc.split("\n");
         let lrcObj = {};
@@ -460,7 +505,8 @@
       isPlay() {
       }
     },
-    computed:{
+    computed: {
+      ...mapGetters('user', ['fav', 'check']),
 
     },
     mounted() {//挂载完后执行一次获取随机音乐，
@@ -569,19 +615,34 @@
         color: $topc;
         align-items: center;
         justify-content: space-around;
-
+        div{
+          position: absolute;
+          right: 1rem;
+        }
+        .show{
+          display: none;
+        }
         p {
           white-space: nowrap;
           width: 60%;
           overflow: hidden;
           text-overflow: ellipsis;
         }
-
+        .toast{
+          position: absolute;
+          bottom: -5rem;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: rgba(0,0,0,.7);
+          border-radius: 5px;
+          color: white;
+          z-index: 9999999999;
+          padding: .5rem;
+        }
         .mint-button {
           width: 3rem;
           position: absolute;
           left: 1rem;
-
           padding: 0;
           height: 3rem;
           color: $topc;

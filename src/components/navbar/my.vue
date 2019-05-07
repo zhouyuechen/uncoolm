@@ -22,13 +22,18 @@
       <div class="sorry"></div>
       <img src="../../assets/sorry.jpg" alt="加载失败">
     </div>
-<!--    已登录-->
+    <!--    已登录-->
     <div v-if="check" class="my">
-      <img class="touxiang" :src="now.avatarUrl" alt="加载失败">
-      <h2>昵称：{{this.now.nickname}}</h2>
-      <h3>来自：{{this.now.province}}</h3>
+      <div class="head">
+        <img class="touxiang" :src="now.avatarUrl" alt="加载失败">
+        <h2>{{this.now.nickname}}</h2></div>
+      <div class="head">
+        <h5>来自：{{this.now.province}}</h5>
+        <mt-button style="margin: .3rem 0 .7rem" class="btn" size="small" type="default" @click="out()">退出登录</mt-button>
+      </div>
 
-      <mt-button style="margin: 1rem" class="btn" type="default" @click="out()">退出登录</mt-button>
+
+      <myfav-box v-on:playThis="goup"></myfav-box>
 
     </div>
 
@@ -37,7 +42,17 @@
 <script>
   //加载当前组件需要第三方模块
   import {Toast} from "mint-ui";
-  import {mapGetters, mapActions} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex';
+  import myFav from "../subcomponents/myFav"
+  import axios from 'axios'
+
+  const instance = axios.create({
+    baseURL: 'http://120.79.240.144:3000',
+    //baseURL: 'http://127.0.0.1:3000',
+    xhrFields: {
+      withCredentials: true
+    }
+  });
   export default {
     data() {
       return {
@@ -51,8 +66,14 @@
       ...mapGetters('user', ['check', 'now']),
 
     },
+    components: {
+      'myfav-box': myFav   //注册子组件
+    },
     methods: {
       ...mapActions('user', ['getLogin', 'getLogout']),
+      goup(mid) {/* 点击播放 */
+        this.$emit("playThis", mid);
+      },
       checkVal(val, tip) {
         if (!val) {
           Toast({
@@ -62,14 +83,15 @@
         }
       },
       login() {
-        if(!this.userData.account||!this.userData.pwd){
+        if (!this.userData.account || !this.userData.pwd) {
           Toast({
             message: "密码或账号没输入"
           });
           return
         }
         this.getLogin({
-          http:this.$http,toast:Toast,...this.userData})
+          http: instance, toast: Toast, ...this.userData
+        })
       },
       register() {
         Toast({
@@ -77,10 +99,10 @@
           /* iconClass: 'icon icon-success' */
         });
       },
-      out(){
+      out() {
         this.getLogout({
-          http:this.$http,
-          toast:Toast
+          http: this.$http,
+          toast: Toast
         })
       }
     },
@@ -88,7 +110,8 @@
     }
   };
 </script>
-<style scoped>
+<style scoped lang="scss">
+  $topc: rgba(32, 179, 125, 1);
   .my {
     padding: 2rem;
     display: flex;
@@ -106,7 +129,7 @@
   }
 
   h2 {
-    color: #3ddddd;
+    color: $topc;
   }
 
   img {
@@ -114,7 +137,16 @@
     border-radius: 30px;
     margin: 1rem;
   }
-  img.touxiang{
-    width: 50%;
+
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    img.touxiang {
+      width: 20%;
+
+    }
   }
+
 </style>
