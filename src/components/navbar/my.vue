@@ -49,9 +49,8 @@
   const instance = axios.create({
     baseURL: 'http://120.79.240.144:3000',
     //baseURL: 'http://127.0.0.1:3000',
-    xhrFields: {
       withCredentials: true
-    }
+
   });
   export default {
     data() {
